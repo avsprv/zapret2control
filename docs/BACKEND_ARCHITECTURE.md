@@ -41,6 +41,23 @@ The current root `CMakeLists.txt` unconditionally:
 
 Some of these dependencies may be shared by other existing features, so they must not be removed merely because Windows does not use them. First classify each dependency and source file by actual consumer. Make only the platform-specific pieces conditional after that inventory is complete.
 
+## 2.1 Additional platform-coupled controllers found in the current source
+
+The audit must not stop at `ZapretBackend`. The following existing controllers also contain OS integration or assumptions that need separate review before a Windows target can be enabled:
+
+| Source | Observed coupling | Required treatment |
+|---|---|---|
+| `src/qml/autostartcontroller.cpp` | Writes a freedesktop `.desktop` autostart entry | Keep the user intent platform-neutral; provide Linux desktop-entry and Windows login-startup implementations behind a small platform service |
+| `src/qml/traycontroller.cpp` | Implements StatusNotifierItem and DBus menu integration | Separate Linux StatusNotifier integration from the shared tray actions/state model; select a Windows-native tray implementation on Windows |
+| `src/qml/dbusmenu.cpp` | Implements DBusMenu serialization and protocol | Compile only for the Linux StatusNotifier implementation |
+| `src/qml/logscontroller.cpp` | Delegates log retrieval through the privileged Linux helper | Keep log presentation/filtering shared; move log acquisition to a platform diagnostics provider |
+| `src/qml/configcontroller.cpp` | Uses the privileged helper and Linux installation paths | Separate config editing/validation from privileged persistence and path resolution |
+| `src/qml/listscontroller.cpp` | Uses the privileged helper to access installed runtime list files | Separate list semantics and validation from platform-specific storage/update operations |
+| `src/backend/blockcheckrunner.cpp` | Launches helper-managed process workflows | Treat the runner/process orchestration as platform-specific until command compatibility and process semantics are verified |
+| `src/backend/helperpath.h` | Resolves a Linux helper path and launches through `pkexec` | Replace direct shared use with a platform privilege/operation provider; do not create a Windows-shaped imitation of pkexec |
+
+This table is an initial source-level inventory, not a complete migration checklist. Update it as each controller and helper is inspected. In particular, do not assume that a class is portable merely because it uses Qt APIs such as QProcess, QFile or QStandardPaths.
+
 ## 3. Required architectural boundary
 
 Keep the shared controller responsible for application intent and UI state. It must not know which OS command, service manager, privilege broker, IPC transport or driver mechanism performs an operation.

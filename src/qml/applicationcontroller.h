@@ -5,7 +5,6 @@
 
 #include "backend/zapretbackend.h"
 
-class SystemdBackend;
 class QTimer;
 
 class ApplicationController final : public QObject
@@ -20,6 +19,9 @@ class ApplicationController final : public QObject
 
 public:
     explicit ApplicationController(QObject *parent = nullptr);
+    // Takes ownership of backend. This overload supports isolated controller tests
+    // and keeps platform-specific backend selection outside the controller logic.
+    ApplicationController(ZapretBackend *backend, QObject *parent);
 
     QString serviceState() const;
     bool serviceActive() const;
@@ -44,7 +46,7 @@ private:
     void setState(ZapretBackend::State state);
     void setServiceActionBusy(bool busy);
 
-    SystemdBackend *m_backend = nullptr;
+    ZapretBackend *m_backend = nullptr;
     QTimer *m_refreshTimer = nullptr;
     ZapretBackend::State m_state = ZapretBackend::State::Unknown;
     bool m_bootEnabled = false;

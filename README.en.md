@@ -19,6 +19,9 @@ The application provides a graphical interface for managing an existing zapret2 
 >
 > The application does not bundle zapret2. The **Updates** page supports a clean installation from an upstream release. Strategies found by Blockcheck are not applied automatically; transfer them to your zapret2 configuration and verify them manually.
 
+> [!NOTE]
+> **Platform status.** The current implementation and published packages support Linux. Windows 11 x64 is planned but has not been implemented and is not a supported platform yet. Linux remains a first-class supported platform. See the [platform support strategy](docs/PLATFORM_SUPPORT.md) for the current status and roadmap.
+
 ## Contents
 
 - [Features](#features)

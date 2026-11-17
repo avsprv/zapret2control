@@ -152,7 +152,7 @@ Do not claim that a published checksum authenticates the publisher unless it is 
 - Report forced termination accurately; do not claim graceful shutdown without a verified mechanism.
 - UAC cancellation or failure must leave the system in a safe, clearly reported state.
 
-The detailed Windows supervisor and installer design is maintained in reference/WINDOWS_PACKAGING_ARCHITECTURE.md. It remains a proposed design until a Windows prototype passes its acceptance tests.
+The detailed Windows supervisor and installer design is currently maintained in the project documentation kit at reference/WINDOWS_PACKAGING_ARCHITECTURE.md. Before implementation begins, bring the reviewed design into this repository under docs/ and keep the repository copy authoritative. The design remains proposed until a Windows prototype passes its acceptance tests.
 
 ### 5.4 Installer and user data
 

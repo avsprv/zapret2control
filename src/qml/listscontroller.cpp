@@ -276,7 +276,7 @@ void ListsController::readList(const QString &name)
         m_operation = nullptr;
         setBusy(false);
 
-        if (m_outputExceeded || result.status == OperationStatus::ProtocolError) {
+        if (m_outputExceeded) {
             setStatus(tr("Список превышает ограничение 1 MiB; данные не отображены."));
             return;
         }

@@ -1640,6 +1640,16 @@
 <context>
     <name>SystemdBackend</name>
     <message>
+        <location filename="../src/backend/systemdbackend.cpp"/>
+        <source>Управление конфигурацией выполняется отдельным сервисом платформы.</source>
+        <translation>Configuration management is provided by a separate platform service.</translation>
+    </message>
+    <message>
+        <location filename="../src/backend/systemdbackend.cpp"/>
+        <source>Диагностика предоставляется отдельным сервисом платформы.</source>
+        <translation>Diagnostics are provided by a separate platform service.</translation>
+    </message>
+    <message>
         <location filename="../src/backend/systemdbackend.cpp" line="59"/>
         <source>Ошибка systemctl: %1</source>
         <translation>systemctl error: %1</translation>

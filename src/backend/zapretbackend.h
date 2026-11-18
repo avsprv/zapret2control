@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QList>
 #include <QObject>
 #include <QString>
 
@@ -16,6 +17,7 @@ public:
     using QObject::QObject;
     ~ZapretBackend() override = default;
 
+    virtual QList<Zapret::Backend::CapabilityInfo> capabilities() const = 0;
     virtual void refresh() = 0;
     virtual void verifyState() = 0;
     virtual void verifyState(quint64 requestId) = 0;
@@ -27,6 +29,7 @@ public:
     virtual void setBootEnabled(bool enabled, quint64 requestId) = 0;
 
 signals:
+    void capabilitiesChanged();
     void stateChanged(ZapretBackend::State state);
     void stateVerified(ZapretBackend::State state);
     void stateVerifiedForRequest(quint64 requestId, ZapretBackend::State state);

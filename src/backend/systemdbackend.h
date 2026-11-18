@@ -15,6 +15,8 @@ class SystemdBackend : public ZapretBackend
 public:
     explicit SystemdBackend(QObject *parent = nullptr);
 
+    QList<Zapret::Backend::CapabilityInfo> capabilities() const override;
+
     void refresh() override;
     void verifyState() override;
     void verifyState(quint64 requestId) override;

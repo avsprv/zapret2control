@@ -1,4 +1,5 @@
 #include <QtTest>
+#include <algorithm>
 #include <QProcess>
 #include <QSignalSpy>
 #include <QPointer>
@@ -144,6 +145,7 @@ private slots:
     void lifecycleActionsEmitTypedOperationResults();
     void failedActionReportsTypedFailure();
     void pkexecAuthorizationExitCodesReportDenial();
+    void reportsSupportedCapabilitiesAndAuthorizationRequirements();
     void ordinaryVerificationPublishesGlobalState();
     void newerVerificationSupersedesOlderVerification();
     void refreshDoesNotInvalidateLifecycleVerification();
@@ -301,6 +303,44 @@ void SystemdBackendTest::pkexecAuthorizationExitCodesReportDenial()
         QVERIFY(!result.succeeded());
         QVERIFY(result.message.contains(QStringLiteral("Авторизация")));
     }
+}
+
+void SystemdBackendTest::reportsSupportedCapabilitiesAndAuthorizationRequirements()
+{
+    using namespace Zapret::Backend;
+
+    const SystemdBackend backend;
+    const auto capabilities = backend.capabilities();
+    QCOMPARE(capabilities.size(), 6);
+
+    const auto findCapability = [&capabilities](Capability capability) {
+        const auto it = std::find_if(capabilities.cbegin(), capabilities.cend(),
+                                     [capability](const CapabilityInfo &info) {
+            return info.capability == capability;
+        });
+        return it == capabilities.cend() ? CapabilityInfo{} : *it;
+    };
+
+    const CapabilityInfo query = findCapability(Capability::QueryState);
+    QVERIFY(query.isAvailable());
+    QVERIFY(!query.requiresAuthorization);
+
+    const CapabilityInfo start = findCapability(Capability::Start);
+    QVERIFY(start.isAvailable());
+    QVERIFY(start.requiresAuthorization);
+
+    const CapabilityInfo stop = findCapability(Capability::Stop);
+    QVERIFY(stop.isAvailable());
+    QVERIFY(stop.requiresAuthorization);
+
+    const CapabilityInfo boot = findCapability(Capability::BootEnablement);
+    QVERIFY(boot.isAvailable());
+    QVERIFY(boot.requiresAuthorization);
+
+    QCOMPARE(findCapability(Capability::Configuration).availability,
+             CapabilityAvailability::Unsupported);
+    QCOMPARE(findCapability(Capability::Diagnostics).availability,
+             CapabilityAvailability::Unsupported);
 }
 
 void SystemdBackendTest::ordinaryVerificationPublishesGlobalState()

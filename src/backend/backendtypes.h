@@ -43,15 +43,14 @@ enum class Capability {
     Stop,
     BootEnablement,
     Configuration,
-    Diagnostics,
-    LoginAutostart
+    Diagnostics
 };
 Q_ENUM_NS(Capability)
 
 enum class CapabilityAvailability {
     Available,
     Unavailable,
-    RequiresAuthorization
+    Unsupported
 };
 Q_ENUM_NS(CapabilityAvailability)
 
@@ -71,6 +70,7 @@ struct OperationResult {
 struct CapabilityInfo {
     Capability capability = Capability::QueryState;
     CapabilityAvailability availability = CapabilityAvailability::Unavailable;
+    bool requiresAuthorization = false;
     QString reason;
 
     bool isAvailable() const

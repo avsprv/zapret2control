@@ -3,8 +3,36 @@
 #include "backend/systemdbackend.h"
 
 #include <QTimer>
+#include <QVariantMap>
 
 namespace {
+QString capabilityName(Zapret::Backend::Capability capability)
+{
+    using Zapret::Backend::Capability;
+
+    switch (capability) {
+    case Capability::QueryState: return QStringLiteral("queryState");
+    case Capability::Start: return QStringLiteral("start");
+    case Capability::Stop: return QStringLiteral("stop");
+    case Capability::BootEnablement: return QStringLiteral("bootEnablement");
+    case Capability::Configuration: return QStringLiteral("configuration");
+    case Capability::Diagnostics: return QStringLiteral("diagnostics");
+    }
+    return QStringLiteral("unknown");
+}
+
+QString capabilityAvailabilityName(Zapret::Backend::CapabilityAvailability availability)
+{
+    using Zapret::Backend::CapabilityAvailability;
+
+    switch (availability) {
+    case CapabilityAvailability::Available: return QStringLiteral("available");
+    case CapabilityAvailability::Unavailable: return QStringLiteral("unavailable");
+    case CapabilityAvailability::Unsupported: return QStringLiteral("unsupported");
+    }
+    return QStringLiteral("unavailable");
+}
+
 ZapretBackend::State toBackendState(Zapret::Backend::EngineState state)
 {
     using Zapret::Backend::EngineState;
@@ -44,6 +72,8 @@ ApplicationController::ApplicationController(ZapretBackend *backend, QObject *pa
 
     connect(m_backend, &ZapretBackend::stateChanged,
             this, &ApplicationController::setState);
+    connect(m_backend, &ZapretBackend::capabilitiesChanged,
+            this, &ApplicationController::capabilitiesChanged);
     connect(m_backend, &ZapretBackend::bootEnabledChanged, this, [this](bool enabled) {
         if (m_bootEnabled == enabled)
             return;
@@ -125,6 +155,25 @@ void ApplicationController::setOperationsBusy(bool busy)
 QString ApplicationController::errorMessage() const
 {
     return m_errorMessage;
+}
+
+QVariantList ApplicationController::capabilities() const
+{
+    QVariantList result;
+    const auto backendCapabilities = m_backend->capabilities();
+    result.reserve(backendCapabilities.size());
+
+    for (const auto &info : backendCapabilities) {
+        result.append(QVariantMap{
+            {QStringLiteral("name"), capabilityName(info.capability)},
+            {QStringLiteral("availability"), capabilityAvailabilityName(info.availability)},
+            {QStringLiteral("available"), info.isAvailable()},
+            {QStringLiteral("requiresAuthorization"), info.requiresAuthorization},
+            {QStringLiteral("reason"), info.reason}
+        });
+    }
+
+    return result;
 }
 
 quint64 ApplicationController::nextRequestId()

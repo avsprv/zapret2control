@@ -26,6 +26,22 @@ SystemdBackend::SystemdBackend(QObject *parent)
 {
 }
 
+QList<Zapret::Backend::CapabilityInfo> SystemdBackend::capabilities() const
+{
+    using namespace Zapret::Backend;
+
+    return {
+        {Capability::QueryState, CapabilityAvailability::Available, false, {}},
+        {Capability::Start, CapabilityAvailability::Available, true, {}},
+        {Capability::Stop, CapabilityAvailability::Available, true, {}},
+        {Capability::BootEnablement, CapabilityAvailability::Available, true, {}},
+        {Capability::Configuration, CapabilityAvailability::Unsupported, false,
+         tr("Управление конфигурацией выполняется отдельным сервисом платформы.")},
+        {Capability::Diagnostics, CapabilityAvailability::Unsupported, false,
+         tr("Диагностика предоставляется отдельным сервисом платформы.")}
+    };
+}
+
 void SystemdBackend::query(const QString &verb, const std::function<void(const QString &)> &onResult)
 {
     auto *proc = new QProcess(this);

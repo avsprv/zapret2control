@@ -17,6 +17,23 @@ public:
     int bootChangeCount = 0;
     bool deferActions = false;
     quint64 lastRequestId = 0;
+    QList<Zapret::Backend::CapabilityInfo> capabilityList{
+        {Zapret::Backend::Capability::QueryState,
+         Zapret::Backend::CapabilityAvailability::Available, false, {}},
+        {Zapret::Backend::Capability::Start,
+         Zapret::Backend::CapabilityAvailability::Available, true, {}}
+    };
+
+    QList<Zapret::Backend::CapabilityInfo> capabilities() const override
+    {
+        return capabilityList;
+    }
+
+    void updateCapabilities(const QList<Zapret::Backend::CapabilityInfo> &updated)
+    {
+        capabilityList = updated;
+        emit capabilitiesChanged();
+    }
 
     void completeRequest(quint64 requestId, Zapret::Backend::Operation operation,
                          ZapretBackend::State state,
@@ -128,6 +145,8 @@ private slots:
     void controllerOwnsInjectedBackend();
     void typedOperationResultReportsOutcome();
     void capabilityAvailabilityIsExplicit();
+    void controllerExposesBackendCapabilities();
+    void backendCapabilityChangesNotifyController();
     void controllerConsumesTypedOperationFailure();
 };
 
@@ -230,24 +249,69 @@ void ApplicationControllerTest::capabilityAvailabilityIsExplicit()
     const CapabilityInfo supported{
         Capability::Start,
         CapabilityAvailability::Available,
+        true,
         {}
     };
-    const CapabilityInfo privileged{
-        Capability::BootEnablement,
-        CapabilityAvailability::RequiresAuthorization,
-        QStringLiteral("Requires elevated authorization")
-    };
     const CapabilityInfo unavailable{
-        Capability::LoginAutostart,
+        Capability::BootEnablement,
         CapabilityAvailability::Unavailable,
-        QStringLiteral("Not implemented on this platform")
+        false,
+        QStringLiteral("Service manager is not ready")
+    };
+    const CapabilityInfo unsupported{
+        Capability::Diagnostics,
+        CapabilityAvailability::Unsupported,
+        false,
+        QStringLiteral("Not implemented by this backend")
     };
 
     QVERIFY(supported.isAvailable());
-    QVERIFY(!privileged.isAvailable());
+    QVERIFY(supported.requiresAuthorization);
     QVERIFY(!unavailable.isAvailable());
-    QCOMPARE(privileged.reason, QStringLiteral("Requires elevated authorization"));
-    QCOMPARE(unavailable.capability, Capability::LoginAutostart);
+    QVERIFY(!unsupported.isAvailable());
+    QCOMPARE(unavailable.reason, QStringLiteral("Service manager is not ready"));
+    QCOMPARE(unsupported.availability, CapabilityAvailability::Unsupported);
+}
+
+void ApplicationControllerTest::controllerExposesBackendCapabilities()
+{
+    auto *backend = new FakeBackend;
+    ApplicationController controller(backend, nullptr);
+
+    const QVariantList capabilities = controller.capabilities();
+    QCOMPARE(capabilities.size(), 2);
+    QCOMPARE(capabilities.at(0).toMap().value(QStringLiteral("name")).toString(),
+             QStringLiteral("queryState"));
+    QCOMPARE(capabilities.at(0).toMap().value(QStringLiteral("availability")).toString(),
+             QStringLiteral("available"));
+    QVERIFY(!capabilities.at(0).toMap()
+                 .value(QStringLiteral("requiresAuthorization")).toBool());
+    QCOMPARE(capabilities.at(1).toMap().value(QStringLiteral("name")).toString(),
+             QStringLiteral("start"));
+    QVERIFY(capabilities.at(1).toMap()
+                .value(QStringLiteral("requiresAuthorization")).toBool());
+}
+
+void ApplicationControllerTest::backendCapabilityChangesNotifyController()
+{
+    auto *backend = new FakeBackend;
+    ApplicationController controller(backend, nullptr);
+    QSignalSpy changed(&controller, &ApplicationController::capabilitiesChanged);
+
+    backend->updateCapabilities({
+        {Zapret::Backend::Capability::Diagnostics,
+         Zapret::Backend::CapabilityAvailability::Unsupported,
+         false,
+         QStringLiteral("Not implemented")}
+    });
+
+    QCOMPARE(changed.count(), 1);
+    const QVariantList capabilities = controller.capabilities();
+    QCOMPARE(capabilities.size(), 1);
+    QCOMPARE(capabilities.first().toMap().value(QStringLiteral("name")).toString(),
+             QStringLiteral("diagnostics"));
+    QCOMPARE(capabilities.first().toMap().value(QStringLiteral("availability")).toString(),
+             QStringLiteral("unsupported"));
 }
 
 void ApplicationControllerTest::controllerConsumesTypedOperationFailure()

@@ -8,41 +8,7 @@
 using namespace Zapret::Platform;
 
 namespace {
-
 constexpr qsizetype QueryOutputLimit = 4096;
-
-QString actionName(SystemdBackend::UnitAction action)
-{
-    switch (action) {
-    case SystemdBackend::UnitAction::Start:
-        return QStringLiteral("start");
-    case SystemdBackend::UnitAction::Stop:
-        return QStringLiteral("stop");
-    case SystemdBackend::UnitAction::Enable:
-        return QStringLiteral("enable");
-    case SystemdBackend::UnitAction::Disable:
-        return QStringLiteral("disable");
-    }
-
-    return QStringLiteral("unknown");
-}
-
-Zapret::Backend::Operation operationForAction(SystemdBackend::UnitAction action)
-{
-    using Zapret::Backend::Operation;
-
-    switch (action) {
-    case SystemdBackend::UnitAction::Start:
-        return Operation::Start;
-    case SystemdBackend::UnitAction::Stop:
-        return Operation::Stop;
-    case SystemdBackend::UnitAction::Enable:
-    case SystemdBackend::UnitAction::Disable:
-        return Operation::SetBootEnabled;
-    }
-
-    return Operation::QueryState;
-}
 
 ZapretBackend::State parseUnitState(const QString &output)
 {
@@ -72,44 +38,6 @@ Zapret::Backend::EngineState toEngineState(ZapretBackend::State state)
     }
 }
 
-QString queryErrorMessage(const OperationResult &result)
-{
-    switch (result.status) {
-    case OperationStatus::TimedOut:
-        return QObject::tr("Превышено время ожидания ответа systemctl.");
-    case OperationStatus::ProtocolError:
-        return QObject::tr("Некорректный ответ systemctl.");
-    case OperationStatus::Unavailable:
-    case OperationStatus::Failed:
-    case OperationStatus::AuthorizationDenied:
-        return QObject::tr("Ошибка systemctl: %1").arg(result.nativeCode);
-    case OperationStatus::Succeeded:
-        break;
-    }
-
-    return {};
-}
-
-QString actionErrorMessage(OperationStatus status, int nativeCode, const QString &action)
-{
-    switch (status) {
-    case OperationStatus::AuthorizationDenied:
-        return QObject::tr("Авторизация для операции systemd отклонена.");
-    case OperationStatus::TimedOut:
-        return QObject::tr("Истекло время ожидания операции systemd: %1").arg(action);
-    case OperationStatus::Unavailable:
-        return QObject::tr("Не удалось запустить операцию systemd.");
-    case OperationStatus::ProtocolError:
-        return QObject::tr("Некорректный ответ systemd.");
-    case OperationStatus::Failed:
-        return QObject::tr("Операция не выполнена (код %1).").arg(nativeCode);
-    case OperationStatus::Succeeded:
-        break;
-    }
-
-    return {};
-}
-
 } // namespace
 
 SystemdBackend::SystemdBackend(ServiceControlOperations *operations, QObject *parent)
@@ -123,6 +51,78 @@ SystemdBackend::SystemdBackend(ServiceControlOperations *operations, QObject *pa
 int SystemdBackend::processTimeoutMs(bool privileged) const
 {
     return privileged ? 120000 : 15000;
+}
+
+QString SystemdBackend::actionName(UnitAction action)
+{
+    switch (action) {
+    case UnitAction::Start:
+        return QStringLiteral("start");
+    case UnitAction::Stop:
+        return QStringLiteral("stop");
+    case UnitAction::Enable:
+        return QStringLiteral("enable");
+    case UnitAction::Disable:
+        return QStringLiteral("disable");
+    }
+
+    return QStringLiteral("unknown");
+}
+
+Zapret::Backend::Operation SystemdBackend::operationForAction(UnitAction action)
+{
+    using Zapret::Backend::Operation;
+
+    switch (action) {
+    case UnitAction::Start:
+        return Operation::Start;
+    case UnitAction::Stop:
+        return Operation::Stop;
+    case UnitAction::Enable:
+    case UnitAction::Disable:
+        return Operation::SetBootEnabled;
+    }
+
+    return Operation::QueryState;
+}
+
+QString SystemdBackend::queryErrorMessage(const OperationResult &result) const
+{
+    switch (result.status) {
+    case OperationStatus::TimedOut:
+        return tr("Превышено время ожидания ответа systemctl.");
+    case OperationStatus::ProtocolError:
+        return tr("Некорректный ответ systemctl.");
+    case OperationStatus::Unavailable:
+    case OperationStatus::Failed:
+    case OperationStatus::AuthorizationDenied:
+        return tr("Ошибка systemctl: %1").arg(result.nativeCode);
+    case OperationStatus::Succeeded:
+        break;
+    }
+
+    return {};
+}
+
+QString SystemdBackend::actionErrorMessage(
+    OperationStatus status, int nativeCode, const QString &action) const
+{
+    switch (status) {
+    case OperationStatus::AuthorizationDenied:
+        return tr("Авторизация для операции systemd отклонена.");
+    case OperationStatus::TimedOut:
+        return tr("Истекло время ожидания операции systemd: %1").arg(action);
+    case OperationStatus::Unavailable:
+        return tr("Не удалось запустить операцию systemd.");
+    case OperationStatus::ProtocolError:
+        return tr("Некорректный ответ systemd.");
+    case OperationStatus::Failed:
+        return tr("Операция не выполнена (код %1).").arg(nativeCode);
+    case OperationStatus::Succeeded:
+        break;
+    }
+
+    return {};
 }
 
 QList<Zapret::Backend::CapabilityInfo> SystemdBackend::capabilities() const
@@ -158,7 +158,7 @@ void SystemdBackend::observeQuery(PlatformOperation *operation, const QueryCallb
     timeout->setSingleShot(true);
 
     connect(timeout, &QTimer::timeout, this,
-            [this, timeout, output, completed, callback] {
+            [this, timeout, completed, callback] {
         if (*completed)
             return;
         *completed = true;
@@ -198,7 +198,7 @@ void SystemdBackend::observeQuery(PlatformOperation *operation, const QueryCallb
                            QStringLiteral("systemctl.stdout_limit_exceeded")};
         } else if (result.succeeded()) {
             decoded = QString::fromUtf8(*output).trimmed();
-            if (decoded.toUtf8() != *output) {
+            if (decoded.toUtf8() != output->trimmed()) {
                 finalResult = {OperationStatus::ProtocolError, result.nativeCode,
                                QStringLiteral("systemctl.invalid_utf8")};
                 decoded.clear();

@@ -686,6 +686,16 @@
         <source>Не удалось вычислить контрольную сумму исходной конфигурации.</source>
         <translation>Could not calculate the checksum of the original configuration.</translation>
     </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Операция не выполнена.</source>
+        <translation>Operation failed.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Конфигурация сохранена.</source>
+        <translation>Configuration saved.</translation>
+    </message>
 </context>
 <context>
     <name>ConfigPage</name>

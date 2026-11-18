@@ -6,12 +6,13 @@
 #include "platform/linuxconfigurationoperations.h"
 #include "platform/linuxhostlistoperations.h"
 #include "platform/linuxsystemlogoperations.h"
+#include "platform/linuxservicecontroloperations.h"
 
 namespace Zapret::Platform {
 
 ZapretBackend *createBackend()
 {
-    return new SystemdBackend;
+    return new SystemdBackend(createServiceControlOperations());
 }
 
 ConfigurationOperations *createConfigurationOperations()
@@ -27,6 +28,11 @@ HostListOperations *createHostListOperations()
 SystemLogOperations *createSystemLogOperations()
 {
     return new LinuxSystemLogOperations;
+}
+
+ServiceControlOperations *createServiceControlOperations()
+{
+    return new LinuxServiceControlOperations;
 }
 
 TrayIntegration *createTrayIntegration()

@@ -32,7 +32,7 @@ OperationResult resultForActionExitCode(int exitCode)
 
 LinuxServiceControlOperations::LinuxServiceControlOperations(
     int queryTimeoutMs, int actionTimeoutMs, QObject *parent)
-    : ServiceControlOperations(parent)
+    : QObject(parent)
     , m_queryTimeoutMs(qMax(queryTimeoutMs, MinimumTimeoutMs))
     , m_actionTimeoutMs(qMax(actionTimeoutMs, MinimumTimeoutMs))
 {

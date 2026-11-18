@@ -20,6 +20,10 @@ ConfigurationOperations *createConfigurationOperations();
 // The caller takes ownership of the returned object.
 HostListOperations *createHostListOperations();
 
+// Creates the system-log adapter selected for the current platform.
+// The caller takes ownership of the returned object.
+SystemLogOperations *createSystemLogOperations();
+
 // Creates the desktop tray adapter selected for the current platform.
 // The caller takes ownership of the returned object.
 TrayIntegration *createTrayIntegration();

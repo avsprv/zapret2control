@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QVariantList>
 
 #include "backend/zapretbackend.h"
 
@@ -16,6 +17,7 @@ class ApplicationController final : public QObject
     Q_PROPERTY(bool bootEnabled READ bootEnabled NOTIFY bootEnabledChanged)
     Q_PROPERTY(bool operationsBusy READ operationsBusy NOTIFY operationsBusyChanged)
     Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
+    Q_PROPERTY(QVariantList capabilities READ capabilities NOTIFY capabilitiesChanged)
 
 public:
     explicit ApplicationController(QObject *parent = nullptr);
@@ -30,6 +32,7 @@ public:
     bool operationsBusy() const;
     void setOperationsBusy(bool busy);
     QString errorMessage() const;
+    QVariantList capabilities() const;
 
     Q_INVOKABLE void refresh();
     Q_INVOKABLE void startService();
@@ -41,6 +44,7 @@ signals:
     void errorMessageChanged();
     void bootEnabledChanged();
     void operationsBusyChanged();
+    void capabilitiesChanged();
 
 private:
     quint64 nextRequestId();

@@ -21,13 +21,10 @@ ecm_find_qmlmodule(org.kde.kirigami REQUIRED)
 
 find_package(Qt6 ${QZAPRET_QT_MIN} REQUIRED COMPONENTS
     Network LinguistTools
-    Core Gui Qml Quick QuickControls2 QuickDialogs2 DBus
+    Core Gui Qml Quick QuickControls2 QuickDialogs2
 )
 
 qt_standard_project_setup(REQUIRES ${QZAPRET_QT_MIN})
-
-set(QZAPRET_HELPER "${CMAKE_INSTALL_FULL_LIBEXECDIR}/zapret2control/zapret2control-helper")
-
 
 qt_add_library(zapret2control_i18n STATIC src/i18n.cpp src/i18n.h)
 target_include_directories(zapret2control_i18n PUBLIC src)
@@ -76,10 +73,6 @@ qt_add_executable(zapret2control
     src/qml/settingsmanager.h
     src/qml/autostartcontroller.cpp
     src/qml/autostartcontroller.h
-    src/qml/traycontroller.cpp
-    src/qml/traycontroller.h
-    src/qml/dbusmenu.cpp
-    src/qml/dbusmenu.h
     src/qml/configcontroller.cpp
     src/qml/configcontroller.h
     src/qml/profilecontroller.cpp
@@ -101,8 +94,6 @@ qt_add_executable(zapret2control
     src/backend/blockcheckrunner.h
     src/profileanalyzer.cpp
     src/profileanalyzer.h
-    src/backend/systemdbackend.cpp
-    src/backend/systemdbackend.h
     src/backend/zapretbackend.h
     src/backend/backendtypes.h
     src/backend/helperpath.h
@@ -123,12 +114,11 @@ qt_add_qml_module(zapret2control
 )
 target_include_directories(zapret2control PRIVATE src src/qml)
 target_link_libraries(zapret2control PRIVATE
-    Qt6::Core Qt6::Gui Qt6::Network Qt6::Qml Qt6::Quick Qt6::QuickControls2 Qt6::QuickDialogs2 Qt6::DBus
+    Qt6::Core Qt6::Gui Qt6::Network Qt6::Qml Qt6::Quick Qt6::QuickControls2 Qt6::QuickDialogs2
     zapret2control_i18n
 )
 target_compile_definitions(zapret2control PRIVATE
-    QZAPRET_VERSION="${PROJECT_VERSION}"
-    QZAPRET_HELPER_PATH="${QZAPRET_HELPER}")
+    QZAPRET_VERSION="${PROJECT_VERSION}")
 target_compile_options(zapret2control PRIVATE -Wall -Wextra)
 target_link_options(zapret2control PRIVATE -Wl,-z,now)
 
@@ -138,39 +128,7 @@ if("Qt6::Widgets" IN_LIST QZAPRET_PRODUCTION_LINK_LIBRARIES)
     message(FATAL_ERROR "The production QML target must not link Qt6::Widgets")
 endif()
 
-configure_file(data/org.zapret2control.policy.in ${CMAKE_BINARY_DIR}/org.zapret2control.policy @ONLY)
-
-configure_file(data/systemd/zapret2control-blockcheck.service.in
-    ${CMAKE_BINARY_DIR}/zapret2control-blockcheck.service @ONLY)
-configure_file(data/systemd/zapret2control-blockcheck-recovery.service.in
-    ${CMAKE_BINARY_DIR}/zapret2control-blockcheck-recovery.service @ONLY)
-
 install(TARGETS zapret2control RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(PROGRAMS packaging/helper/zapret2control-helper
-        DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/zapret2control)
-install(FILES
-        packaging/helper/blockcheck_manager.py
-        packaging/helper/blockcheck_state.py
-        packaging/helper/blockcheck_staging.py
-        packaging/helper/blockcheck_worker.py
-        packaging/helper/blockcheck_recovery.py
-        packaging/helper/blockcheck_submit.py
-        packaging/helper/blockcheck_status.py
-        packaging/helper/blockcheck_probe.py
-        packaging/helper/blockcheck_admission.py
-        packaging/helper/blockcheck_cancel.py
-        packaging/helper/updater_transaction.py
-        packaging/helper/updater_staging.py
-        packaging/helper/updater_activation.py
-        packaging/helper/updater_service.py
-        packaging/helper/updater_cli.py
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/zapret2control)
-install(FILES ${CMAKE_BINARY_DIR}/org.zapret2control.policy
-        DESTINATION ${CMAKE_INSTALL_DATADIR}/polkit-1/actions)
-install(FILES
-        ${CMAKE_BINARY_DIR}/zapret2control-blockcheck.service
-        ${CMAKE_BINARY_DIR}/zapret2control-blockcheck-recovery.service
-        DESTINATION lib/systemd/system)
 install(FILES data/zapret2control.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
 install(FILES data/zapret2control.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)
 install(FILES data/org.avsprv.zapret2control.metainfo.xml
@@ -180,4 +138,5 @@ install(FILES data/icons/hicolor/scalable/apps/zapret2control.svg
 install(FILES data/icons/hicolor/symbolic/apps/zapret2control-tray-symbolic.svg
         DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/symbolic/apps)
 
+include(cmake/LinuxPlatform.cmake)
 include(cmake/Testing.cmake)

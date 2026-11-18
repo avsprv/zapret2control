@@ -94,6 +94,7 @@ QString SystemdBackend::queryErrorMessage(const OperationResult &result) const
     case OperationStatus::ProtocolError:
         return tr("Некорректный ответ systemctl.");
     case OperationStatus::Unavailable:
+        return tr("Не удалось запустить systemctl.");
     case OperationStatus::Failed:
     case OperationStatus::AuthorizationDenied:
         return tr("Ошибка systemctl: %1").arg(result.nativeCode);

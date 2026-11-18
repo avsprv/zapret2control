@@ -4,7 +4,6 @@ on:
   push:
     branches: [main, feature/migrate-qml-kirigami, feature/rename-zapret2control]
   pull_request:
-    branches: [main]
 
 permissions:
   contents: read

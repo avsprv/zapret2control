@@ -1664,6 +1664,16 @@
         <source>Операция systemd выполняется дольше ожидаемого: %1. Ожидается фактическое завершение команды.</source>
         <translation>Systemd operation is taking longer than expected: %1. Waiting for the command to actually finish.</translation>
     </message>
+    <message>
+        <location filename="../src/backend/systemdbackend.cpp" line="263"/>
+        <source>Истекло время ожидания операции systemd: %1</source>
+        <translation>Timed out waiting for the systemd operation: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/backend/systemdbackend.cpp" line="265"/>
+        <source>Авторизация для операции systemd отклонена.</source>
+        <translation>Authorization for the systemd operation was denied.</translation>
+    </message>
 </context>
 <context>
     <name>UpdateChecker</name>

@@ -16,6 +16,7 @@ public:
     int maxConcurrentPrivilegedProcesses = 0;
     bool failNextActionToStart = false;
     bool failNextActionToExecute = false;
+    int nextActionExitCode = -1;
     bool failNextStateQueryToStart = false;
     int activeQueryCount = 0;
     bool holdPrivilegedProcessOpen = false;
@@ -66,6 +67,13 @@ protected:
             if (failNextActionToStart) {
                 failNextActionToStart = false;
                 process->start(QStringLiteral("/path/that/does/not/exist"));
+                return;
+            }
+            if (nextActionExitCode >= 0) {
+                const int exitCode = nextActionExitCode;
+                nextActionExitCode = -1;
+                process->start(QStringLiteral("/bin/sh"),
+                               {QStringLiteral("-c"), QStringLiteral("exit %1").arg(exitCode)});
                 return;
             }
             if (failNextActionToExecute) {
@@ -133,6 +141,9 @@ private slots:
     void correlatedVerificationDoesNotPublishGlobalState();
     void correlatedLifecycleActionsEmitOnlyRequestCompletion();
     void correlatedBootActionEmitsRequestCompletion();
+    void lifecycleActionsEmitTypedOperationResults();
+    void failedActionReportsTypedFailure();
+    void pkexecAuthorizationExitCodesReportDenial();
     void ordinaryVerificationPublishesGlobalState();
     void newerVerificationSupersedesOlderVerification();
     void refreshDoesNotInvalidateLifecycleVerification();
@@ -141,6 +152,7 @@ private slots:
     void refreshCoalescesWhileQueriesAreRunning();
     void stateQueryTimeoutProducesUnknown();
     void continuesAfterTimedOutAction();
+    void timedOutActionReportsTypedTimeout();
     void verificationDuringActionIsInvalidatedWhenActionFinishes();
     void correlatedVerificationInvalidatesOlderRefresh();
     void destroyingBackendDestroysActiveProcesses();
@@ -236,6 +248,59 @@ void SystemdBackendTest::correlatedBootActionEmitsRequestCompletion()
     QCOMPARE(genericFinished.count(), 0);
     QCOMPARE(requestFinished.at(0).at(0).toULongLong(), quint64(303));
     QCOMPARE(requestFinished.at(0).at(1).toString(), QStringLiteral("enable"));
+}
+
+void SystemdBackendTest::lifecycleActionsEmitTypedOperationResults()
+{
+    TestSystemdBackend backend;
+    QSignalSpy results(&backend, &ZapretBackend::operationFinished);
+
+    backend.start(quint64(404));
+
+    QTRY_COMPARE_WITH_TIMEOUT(results.count(), 1, 3000);
+    const auto result = qvariant_cast<Zapret::Backend::OperationResult>(results.at(0).at(0));
+    QCOMPARE(result.requestId, quint64(404));
+    QCOMPARE(result.operation, Zapret::Backend::Operation::Start);
+    QCOMPARE(result.status, Zapret::Backend::OperationStatus::Succeeded);
+    QCOMPARE(result.state, Zapret::Backend::EngineState::Active);
+    QVERIFY(result.succeeded());
+}
+
+void SystemdBackendTest::failedActionReportsTypedFailure()
+{
+    TestSystemdBackend backend;
+    backend.failNextActionToExecute = true;
+    QSignalSpy results(&backend, &ZapretBackend::operationFinished);
+
+    backend.stop(quint64(405));
+
+    QTRY_COMPARE_WITH_TIMEOUT(results.count(), 1, 3000);
+    const auto result = qvariant_cast<Zapret::Backend::OperationResult>(results.at(0).at(0));
+    QCOMPARE(result.requestId, quint64(405));
+    QCOMPARE(result.operation, Zapret::Backend::Operation::Stop);
+    QCOMPARE(result.status, Zapret::Backend::OperationStatus::Failed);
+    QVERIFY(!result.succeeded());
+    QVERIFY(!result.message.isNull());
+}
+
+void SystemdBackendTest::pkexecAuthorizationExitCodesReportDenial()
+{
+    for (const int exitCode : {126, 127}) {
+        TestSystemdBackend backend;
+        backend.nextActionExitCode = exitCode;
+        QSignalSpy results(&backend, &ZapretBackend::operationFinished);
+
+        backend.stop(quint64(exitCode));
+
+        QTRY_COMPARE_WITH_TIMEOUT(results.count(), 1, 3000);
+        const auto result =
+            qvariant_cast<Zapret::Backend::OperationResult>(results.at(0).at(0));
+        QCOMPARE(result.requestId, quint64(exitCode));
+        QCOMPARE(result.operation, Zapret::Backend::Operation::Stop);
+        QCOMPARE(result.status, Zapret::Backend::OperationStatus::AuthorizationDenied);
+        QVERIFY(!result.succeeded());
+        QVERIFY(result.message.contains(QStringLiteral("Авторизация")));
+    }
 }
 
 void SystemdBackendTest::ordinaryVerificationPublishesGlobalState()
@@ -375,6 +440,23 @@ void SystemdBackendTest::continuesAfterTimedOutAction()
     QVERIFY(!finished.at(0).at(2).toBool());
     QVERIFY(finished.at(1).at(2).toBool());
     QCOMPARE(backend.maxConcurrentPrivilegedProcesses, 1);
+}
+
+void SystemdBackendTest::timedOutActionReportsTypedTimeout()
+{
+    TestSystemdBackend backend;
+    backend.shortTimeouts = true;
+    backend.delayNextAction = true;
+    QSignalSpy results(&backend, &ZapretBackend::operationFinished);
+
+    backend.stop(quint64(406));
+
+    QTRY_COMPARE_WITH_TIMEOUT(results.count(), 1, 3000);
+    const auto result = qvariant_cast<Zapret::Backend::OperationResult>(results.at(0).at(0));
+    QCOMPARE(result.requestId, quint64(406));
+    QCOMPARE(result.operation, Zapret::Backend::Operation::Stop);
+    QCOMPARE(result.status, Zapret::Backend::OperationStatus::TimedOut);
+    QVERIFY(!result.succeeded());
 }
 
 void SystemdBackendTest::verificationDuringActionIsInvalidatedWhenActionFinishes()

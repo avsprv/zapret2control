@@ -75,6 +75,34 @@ ZapretBackend::State parseUnitState(const QString &out)
         return ZapretBackend::State::Failed;
     return ZapretBackend::State::Unknown;
 }
+
+Zapret::Backend::EngineState toEngineState(ZapretBackend::State state)
+{
+    using Zapret::Backend::EngineState;
+
+    switch (state) {
+    case ZapretBackend::State::Active:
+        return EngineState::Active;
+    case ZapretBackend::State::Inactive:
+        return EngineState::Inactive;
+    case ZapretBackend::State::Failed:
+        return EngineState::Failed;
+    case ZapretBackend::State::Unknown:
+    default:
+        return EngineState::Unknown;
+    }
+}
+
+Zapret::Backend::Operation operationForAction(const QString &action)
+{
+    using Zapret::Backend::Operation;
+
+    if (action == QLatin1String("start"))
+        return Operation::Start;
+    if (action == QLatin1String("stop"))
+        return Operation::Stop;
+    return Operation::SetBootEnabled;
+}
 } // namespace
 
 void SystemdBackend::refresh()
@@ -172,14 +200,28 @@ void SystemdBackend::startNextUnitAction()
     auto timedOut = std::make_shared<bool>(false);
     auto *timeout = new QTimer(proc);
     timeout->setSingleShot(true);
-    const auto reportResult = [this, action, requestId](bool success) {
+    const auto reportResult = [this, action, requestId](
+                                  bool success,
+                                  Zapret::Backend::OperationStatus status,
+                                  const QString &message) {
         // Discard lifecycle verification started while the privileged action was running.
         ++m_verificationGeneration;
         const quint64 generation = ++m_stateQueryGeneration;
-        query(QStringLiteral("is-active"), [this, action, success, requestId, generation](const QString &out) {
+        query(QStringLiteral("is-active"),
+              [this, action, requestId, success, status, message, generation](const QString &out) {
             const State state = parseUnitState(out);
             if (generation == m_stateQueryGeneration)
                 emit stateChanged(state);
+
+            const Zapret::Backend::OperationResult result{
+                requestId,
+                operationForAction(action),
+                status,
+                toEngineState(state),
+                message
+            };
+            emit operationFinished(result);
+
             if (requestId == 0)
                 emit unitActionFinished(action, state, success);
             else
@@ -208,21 +250,37 @@ void SystemdBackend::startNextUnitAction()
         *completed = true;
         timeout->stop();
         const bool success = !*timedOut && code == 0 && status == QProcess::NormalExit;
-        if (!*timedOut && !success && !Helper::isAuthDismissed(code)) {
+        const bool authorizationDenied = !success && !*timedOut && Helper::isAuthorizationDenied(code);
+        const auto operationStatus = success
+            ? Zapret::Backend::OperationStatus::Succeeded
+            : (*timedOut
+                   ? Zapret::Backend::OperationStatus::TimedOut
+                   : (authorizationDenied
+                          ? Zapret::Backend::OperationStatus::AuthorizationDenied
+                          : Zapret::Backend::OperationStatus::Failed));
+        QString message;
+        if (*timedOut) {
+            message = tr("Истекло время ожидания операции systemd: %1").arg(action);
+        } else if (authorizationDenied) {
+            message = tr("Авторизация для операции systemd отклонена.");
+        } else if (!success) {
             const QString err = QString::fromUtf8(proc->readAllStandardError()).trimmed();
-            emit errorOccurred(tr("Операция не выполнена (код %1): %2").arg(code).arg(err));
+            message = tr("Операция не выполнена (код %1): %2").arg(code).arg(err);
+            emit errorOccurred(message);
         }
         proc->deleteLater();
-        reportResult(success);
+        reportResult(success, operationStatus, message);
     });
     connect(proc, &QProcess::errorOccurred, this,
             [this, proc, reportResult, completed, timeout](QProcess::ProcessError error) {
         if (error == QProcess::FailedToStart && !*completed) {
             timeout->stop();
-            emit errorOccurred(tr("Не удалось запустить операцию systemd: %1").arg(proc->errorString()));
+            const QString message =
+                tr("Не удалось запустить операцию systemd: %1").arg(proc->errorString());
+            emit errorOccurred(message);
             *completed = true;
             proc->deleteLater(); // finished() после FailedToStart не приходит
-            reportResult(false);
+            reportResult(false, Zapret::Backend::OperationStatus::Failed, message);
         }
     });
     startProcess(proc, QString(), {QStringLiteral("unit"), action}, true);

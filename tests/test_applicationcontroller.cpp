@@ -18,6 +18,33 @@ public:
     bool deferActions = false;
     quint64 lastRequestId = 0;
 
+    void completeRequest(quint64 requestId, Zapret::Backend::Operation operation,
+                         ZapretBackend::State state,
+                         Zapret::Backend::OperationStatus status =
+                             Zapret::Backend::OperationStatus::Succeeded,
+                         const QString &message = {})
+    {
+        using Zapret::Backend::EngineState;
+
+        EngineState engineState = EngineState::Unknown;
+        switch (state) {
+        case ZapretBackend::State::Active:
+            engineState = EngineState::Active;
+            break;
+        case ZapretBackend::State::Inactive:
+            engineState = EngineState::Inactive;
+            break;
+        case ZapretBackend::State::Failed:
+            engineState = EngineState::Failed;
+            break;
+        case ZapretBackend::State::Unknown:
+        default:
+            break;
+        }
+
+        emit operationFinished({requestId, operation, status, engineState, message});
+    }
+
     void refresh() override
     {
         ++refreshCount;
@@ -42,9 +69,12 @@ public:
     {
         ++startCount;
         lastRequestId = requestId;
-        if (!deferActions)
+        if (!deferActions) {
+            completeRequest(requestId, Zapret::Backend::Operation::Start,
+                            ZapretBackend::State::Active);
             emit unitActionFinishedForRequest(requestId, QStringLiteral("start"),
                                               ZapretBackend::State::Active, true);
+        }
     }
 
     void stop() override
@@ -57,9 +87,12 @@ public:
     {
         ++stopCount;
         lastRequestId = requestId;
-        if (!deferActions)
+        if (!deferActions) {
+            completeRequest(requestId, Zapret::Backend::Operation::Stop,
+                            ZapretBackend::State::Inactive);
             emit unitActionFinishedForRequest(requestId, QStringLiteral("stop"),
                                               ZapretBackend::State::Inactive, true);
+        }
     }
 
     void setBootEnabled(bool enabled) override
@@ -76,6 +109,8 @@ public:
         lastRequestId = requestId;
         if (!deferActions) {
             emit bootEnabledChanged(enabled);
+            completeRequest(requestId, Zapret::Backend::Operation::SetBootEnabled,
+                            ZapretBackend::State::Unknown);
             emit unitActionFinishedForRequest(
                 requestId, enabled ? QStringLiteral("enable") : QStringLiteral("disable"),
                 ZapretBackend::State::Unknown, true);
@@ -93,6 +128,7 @@ private slots:
     void controllerOwnsInjectedBackend();
     void typedOperationResultReportsOutcome();
     void capabilityAvailabilityIsExplicit();
+    void controllerConsumesTypedOperationFailure();
 };
 
 void ApplicationControllerTest::injectedBackendReceivesControllerCommands()
@@ -134,13 +170,13 @@ void ApplicationControllerTest::ignoresCompletionForUnrelatedRequest()
     QVERIFY(requestId != 0);
     QVERIFY(controller.operationsBusy());
 
-    emit backend->unitActionFinishedForRequest(
-        requestId + 1, QStringLiteral("start"), ZapretBackend::State::Active, true);
+    backend->completeRequest(requestId + 1, Zapret::Backend::Operation::Start,
+                             ZapretBackend::State::Active);
     QVERIFY(controller.operationsBusy());
     QVERIFY(!controller.serviceActive());
 
-    emit backend->unitActionFinishedForRequest(
-        requestId, QStringLiteral("start"), ZapretBackend::State::Active, true);
+    backend->completeRequest(requestId, Zapret::Backend::Operation::Start,
+                             ZapretBackend::State::Active);
     QVERIFY(!controller.operationsBusy());
     QVERIFY(controller.serviceActive());
 }
@@ -212,6 +248,26 @@ void ApplicationControllerTest::capabilityAvailabilityIsExplicit()
     QVERIFY(!unavailable.isAvailable());
     QCOMPARE(privileged.reason, QStringLiteral("Requires elevated authorization"));
     QCOMPARE(unavailable.capability, Capability::LoginAutostart);
+}
+
+void ApplicationControllerTest::controllerConsumesTypedOperationFailure()
+{
+    auto *backend = new FakeBackend;
+    backend->deferActions = true;
+    ApplicationController controller(backend, nullptr);
+
+    controller.startService();
+    const quint64 requestId = backend->lastRequestId;
+    QVERIFY(controller.operationsBusy());
+
+    backend->completeRequest(requestId, Zapret::Backend::Operation::Start,
+                             ZapretBackend::State::Inactive,
+                             Zapret::Backend::OperationStatus::AuthorizationDenied,
+                             QStringLiteral("Authorization was denied"));
+
+    QVERIFY(!controller.operationsBusy());
+    QVERIFY(!controller.serviceActive());
+    QCOMPARE(controller.errorMessage(), QStringLiteral("Authorization was denied"));
 }
 
 QTEST_GUILESS_MAIN(ApplicationControllerTest)

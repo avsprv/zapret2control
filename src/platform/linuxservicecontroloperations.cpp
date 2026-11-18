@@ -172,7 +172,7 @@ PlatformOperation *LinuxServiceControlOperations::startQuery(const QString &verb
         } else if (exitStatus != QProcess::NormalExit) {
             result = {OperationStatus::Failed, exitCode,
                       QStringLiteral("systemctl.crashed")};
-        } else if (outputSize->isEmpty()) {
+        } else if (*outputSize == 0) {
             result = {OperationStatus::Failed, exitCode,
                       QStringLiteral("systemctl.empty_response")};
         } else {

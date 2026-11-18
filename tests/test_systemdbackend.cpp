@@ -16,6 +16,7 @@ public:
     int maxConcurrentPrivilegedProcesses = 0;
     bool failNextActionToStart = false;
     bool failNextActionToExecute = false;
+    int nextActionExitCode = -1;
     bool failNextStateQueryToStart = false;
     int activeQueryCount = 0;
     bool holdPrivilegedProcessOpen = false;
@@ -66,6 +67,13 @@ protected:
             if (failNextActionToStart) {
                 failNextActionToStart = false;
                 process->start(QStringLiteral("/path/that/does/not/exist"));
+                return;
+            }
+            if (nextActionExitCode >= 0) {
+                const int exitCode = nextActionExitCode;
+                nextActionExitCode = -1;
+                process->start(QStringLiteral("/bin/sh"),
+                               {QStringLiteral("-c"), QStringLiteral("exit %1").arg(exitCode)});
                 return;
             }
             if (failNextActionToExecute) {
@@ -135,6 +143,7 @@ private slots:
     void correlatedBootActionEmitsRequestCompletion();
     void lifecycleActionsEmitTypedOperationResults();
     void failedActionReportsTypedFailure();
+    void pkexecAuthorizationExitCodesReportDenial();
     void ordinaryVerificationPublishesGlobalState();
     void newerVerificationSupersedesOlderVerification();
     void refreshDoesNotInvalidateLifecycleVerification();
@@ -272,6 +281,26 @@ void SystemdBackendTest::failedActionReportsTypedFailure()
     QCOMPARE(result.status, Zapret::Backend::OperationStatus::Failed);
     QVERIFY(!result.succeeded());
     QVERIFY(!result.message.isNull());
+}
+
+void SystemdBackendTest::pkexecAuthorizationExitCodesReportDenial()
+{
+    for (const int exitCode : {126, 127}) {
+        TestSystemdBackend backend;
+        backend.nextActionExitCode = exitCode;
+        QSignalSpy results(&backend, &ZapretBackend::operationFinished);
+
+        backend.stop(quint64(exitCode));
+
+        QTRY_COMPARE_WITH_TIMEOUT(results.count(), 1, 3000);
+        const auto result =
+            qvariant_cast<Zapret::Backend::OperationResult>(results.at(0).at(0));
+        QCOMPARE(result.requestId, quint64(exitCode));
+        QCOMPARE(result.operation, Zapret::Backend::Operation::Stop);
+        QCOMPARE(result.status, Zapret::Backend::OperationStatus::AuthorizationDenied);
+        QVERIFY(!result.succeeded());
+        QVERIFY(result.message.contains(QStringLiteral("Авторизация")));
+    }
 }
 
 void SystemdBackendTest::ordinaryVerificationPublishesGlobalState()

@@ -16,6 +16,10 @@ ZapretBackend *createBackend();
 // The caller takes ownership of the returned object.
 ConfigurationOperations *createConfigurationOperations();
 
+// Creates the host-list adapter selected for the current platform.
+// The caller takes ownership of the returned object.
+HostListOperations *createHostListOperations();
+
 // Creates the desktop tray adapter selected for the current platform.
 // The caller takes ownership of the returned object.
 TrayIntegration *createTrayIntegration();

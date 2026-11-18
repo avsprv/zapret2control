@@ -46,7 +46,7 @@ void BlockcheckRunner::start(const Options &o)
             handleLine(QString::fromUtf8(m_buf.left(64 * 1024)));
         m_buf.clear();
         m_discardingOversizedLine = false;
-        const bool canceled = m_cancelRequested || Helper::isAuthDismissed(code);
+        const bool canceled = m_cancelRequested || Helper::isAuthorizationDenied(code);
         if (!canceled && (st == QProcess::CrashExit || code != 0) && m_errorCount == 0)
             ++m_errorCount;
         m_proc->deleteLater();

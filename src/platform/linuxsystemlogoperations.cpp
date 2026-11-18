@@ -48,6 +48,7 @@ OperationResult resultForExitCode(int exitCode)
 PlatformOperation *completedOperation(QObject *parent, const OperationResult &result)
 {
     auto *operation = new PlatformOperation(parent);
+    connect(operation, &PlatformOperation::finished, operation, &QObject::deleteLater);
     QTimer::singleShot(0, operation, [operation, result] {
         operation->finish(result);
     });
@@ -72,6 +73,7 @@ PlatformOperation *LinuxSystemLogOperations::readRecentLogs(LogLineCount lineCou
     }
 
     auto *operation = new PlatformOperation(this);
+    connect(operation, &PlatformOperation::finished, operation, &QObject::deleteLater);
     auto *process = new QProcess(this);
     auto *timeout = new QTimer(process);
     auto timedOut = std::make_shared<bool>(false);

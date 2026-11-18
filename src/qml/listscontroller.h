@@ -1,10 +1,12 @@
 #pragma once
 
 #include <QByteArray>
-#include <QProcess>
 #include <QObject>
+#include <QPointer>
 #include <QString>
 #include <QStringList>
+
+#include "platform/privilegedoperations.h"
 
 class ListsController final : public QObject
 {
@@ -18,7 +20,8 @@ class ListsController final : public QObject
     Q_PROPERTY(bool editable READ editable NOTIFY editableChanged)
 
 public:
-    explicit ListsController(QObject *parent = nullptr);
+    explicit ListsController(Zapret::Platform::HostListOperations *operations,
+                             QObject *parent = nullptr);
 
     QString content() const;
     QString status() const;
@@ -52,15 +55,18 @@ private:
     void setContentInternal(const QString &content);
     void setLoadedName(const QString &name);
     void updateEditable();
+    QString operationErrorText(Zapret::Platform::OperationStatus status,
+                                bool writing) const;
 
+    Zapret::Platform::HostListOperations *m_operations = nullptr;
+    QPointer<Zapret::Platform::PlatformOperation> m_operation;
     QString m_content;
     QString m_status;
     QString m_loadedName;
+    QByteArray m_output;
+    bool m_outputExceeded = false;
     bool m_busy = false;
     bool m_loaded = false;
     bool m_dirty = false;
     bool m_editable = false;
-    QByteArray m_output;
-    QByteArray m_error;
-    QProcess *m_process = nullptr;
 };

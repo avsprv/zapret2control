@@ -29,6 +29,58 @@ Kirigami.ApplicationWindow {
 
     pageStack.initialPage: overviewPage
 
+    Kirigami.Dialog {
+        id: quitBlockedDialog
+        title: qsTr("Нельзя завершить приложение")
+        standardButtons: Controls.Dialog.Ok
+
+        Controls.Label {
+            Layout.fillWidth: true
+            wrapMode: Text.WordWrap
+            text: qsTr("Дождитесь завершения текущей операции или восстановления zapret2. Принудительное завершение может повредить установленную систему.")
+        }
+    }
+
+    function showWindow() {
+        show()
+        raise()
+        requestActivate()
+    }
+
+    function toggleWindow() {
+        if (visible && visibility !== Window.Minimized)
+            hide()
+        else
+            showWindow()
+    }
+
+    function requestQuit() {
+        if (root.appController.operationsBusy) {
+            showWindow()
+            quitBlockedDialog.open()
+            return
+        }
+        Qt.quit()
+    }
+
+    function openSettings() {
+        showWindow()
+        pageStack.replace(applicationSettingsPage)
+    }
+
+    onClosing: function(close) {
+        if (root.appController.operationsBusy) {
+            close.accepted = false
+            showWindow()
+            quitBlockedDialog.open()
+            return
+        }
+        if (root.settingsManager.closeToTray && root.trayController.registered) {
+            close.accepted = false
+            hide()
+        }
+    }
+
     globalDrawer: Kirigami.GlobalDrawer {
         isMenu: false
         modal: root.width < Kirigami.Units.gridUnit * 50

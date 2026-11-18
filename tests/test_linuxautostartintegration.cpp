@@ -134,4 +134,4 @@ private slots:
     }
 };
 QTEST_GUILESS_MAIN(TestLinuxAutostartIntegration)
-#include "test_autostartcontroller.moc"
+#include "test_linuxautostartintegration.moc"

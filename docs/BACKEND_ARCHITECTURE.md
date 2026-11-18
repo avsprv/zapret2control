@@ -92,6 +92,18 @@ Examples:
 
 Expose capabilities explicitly, with a typed availability state and explanatory reason. Do not map unrelated mechanisms onto a shared boolean merely to simplify QML.
 
+The typed backend contract uses three distinct availability values:
+
+| Value | Meaning |
+|---|---|
+| `Available` | The backend implements the capability and can accept the operation. |
+| `Unavailable` | The capability is implemented but cannot currently be used in the detected environment. |
+| `Unsupported` | The backend does not implement the capability on this platform. |
+
+Authorization is orthogonal to availability. `CapabilityInfo::requiresAuthorization` indicates that an otherwise available operation crosses the platform's authorization boundary; it must not be represented as an unavailable capability. The QML-facing controller exposes capability records as structured data containing the capability name, availability, authorization requirement and explanatory reason. Consumers must not infer support from a missing boolean or silently treat an unknown capability as available.
+
+The Linux `SystemdBackend` currently reports state query, start, stop and service boot enablement as available; start, stop and boot enablement require authorization. Configuration and diagnostics remain separate platform services and are therefore not claimed as capabilities of this lifecycle backend. This does not mean the existing configuration and diagnostics UI features are absent from the Linux application.
+
 The existing `bootEnabled` property should remain available to the Linux UI until a deliberate UI/product decision changes it. For the cross-platform UI, model service boot enablement and application login autostart as distinct settings. A platform that does not support one must report it as unavailable, not silently return false.
 
 ## 5. Composition and platform selection

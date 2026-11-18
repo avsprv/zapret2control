@@ -42,7 +42,7 @@ qt_add_translations(zapret2control_i18n
         src/qml/listscontroller.cpp
         src/qml/blockcheckjobcontroller.cpp
         src/qml/updatecontroller.cpp
-        src/qml/autostartcontroller.cpp
+        src/platform/linuxautostartintegration.cpp
         src/qml/traycontroller.cpp
         src/qml/dbusmenu.cpp
         src/backend/blockcheckrunner.cpp
@@ -71,8 +71,7 @@ qt_add_executable(zapret2control
     src/qml/applicationcontroller.h
     src/qml/settingsmanager.cpp
     src/qml/settingsmanager.h
-    src/qml/autostartcontroller.cpp
-    src/qml/autostartcontroller.h
+    src/platform/linuxautostartintegration.cpp
     src/qml/configcontroller.cpp
     src/qml/configcontroller.h
     src/qml/profilecontroller.cpp

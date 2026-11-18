@@ -3,6 +3,8 @@
 #include <QObject>
 #include <QString>
 
+#include "backendtypes.h"
+
 // Единственная точка контакта с upstream engine lifecycle.
 class ZapretBackend : public QObject
 {
@@ -33,4 +35,5 @@ signals:
                                       ZapretBackend::State state, bool success);
     void bootEnabledChanged(bool enabled);
     void errorOccurred(const QString &message);
+    void operationFinished(const Zapret::Backend::OperationResult &result);
 };

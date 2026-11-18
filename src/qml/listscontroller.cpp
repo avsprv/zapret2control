@@ -258,7 +258,7 @@ void ListsController::readList(const QString &name)
     m_operation = operation;
     connect(operation, &PlatformOperation::standardOutputReceived, this,
             [this, operation](const QByteArray &data) {
-        if (m_operation != operation || data.isEmpty())
+        if (m_operation != operation || m_outputExceeded || data.isEmpty())
             return;
         if (m_output.size() + data.size() > 1024 * 1024) {
             m_outputExceeded = true;

@@ -32,10 +32,10 @@ inline void start(QProcess *proc, const QStringList &args)
         proc->start(QStringLiteral("pkexec"), QStringList{path()} + args);
 }
 
-// pkexec: 126 — пользователь закрыл диалог, 127 — не авторизован.
-inline bool isAuthDismissed(int exitCode)
+// pkexec: 126 — пользователь закрыл диалог, 127 — авторизация не получена.
+inline bool isAuthorizationDenied(int exitCode)
 {
-    return exitCode == 126;
+    return exitCode == 126 || exitCode == 127;
 }
 
 } // namespace Helper

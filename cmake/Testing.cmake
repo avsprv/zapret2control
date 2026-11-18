@@ -3,6 +3,12 @@
 # and CMAKE_CURRENT_SOURCE_DIR semantics remain unchanged during the extraction.
 
 if(BUILD_TESTING)
+    qt_add_executable(test_privilegedoperation tests/test_privilegedoperation.cpp
+        src/platform/privilegedoperation.cpp src/platform/privilegedoperation.h)
+    target_include_directories(test_privilegedoperation PRIVATE src)
+    target_link_libraries(test_privilegedoperation PRIVATE Qt6::Test Qt6::Core)
+    add_test(NAME privileged_operation COMMAND test_privilegedoperation)
+
     find_package(Qt6 ${QZAPRET_QT_MIN} REQUIRED COMPONENTS Test)
     find_program(DBUS_RUN_SESSION_EXECUTABLE dbus-run-session REQUIRED)
     qt_add_executable(test_blockcheck tests/test_blockcheck.cpp

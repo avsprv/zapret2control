@@ -347,7 +347,7 @@ TrayController::~TrayController()
 }
 
 TrayController::TrayController(QObject *parent)
-    : QObject(parent)
+    : TrayIntegration(parent)
     , m_bus(QDBusConnection::sessionBus())
     , m_watcher(new QDBusServiceWatcher(QString::fromLatin1(watcherService),
                                         m_bus,

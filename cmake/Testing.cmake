@@ -40,7 +40,8 @@ if(BUILD_TESTING)
 
     qt_add_executable(test_dbusmenu_dbus tests/test_dbusmenu_dbus.cpp
         src/qml/dbusmenu.cpp src/qml/dbusmenu.h
-        src/qml/traycontroller.cpp src/qml/traycontroller.h)
+        src/qml/traycontroller.cpp src/qml/traycontroller.h
+        src/platform/trayintegration.h)
     target_include_directories(test_dbusmenu_dbus PRIVATE src src/qml)
     target_link_libraries(test_dbusmenu_dbus PRIVATE Qt6::Test Qt6::Core Qt6::Gui Qt6::DBus)
     add_test(NAME dbusmenu_session_bus

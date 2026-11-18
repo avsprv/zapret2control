@@ -11,7 +11,12 @@ and manual desktop lifecycle checks remain part of the migration gate.
 
 ## Decision
 
-Implement the tray integration directly on QtDBus in the production QML application. Do not use
+Keep the application-facing tray contract platform-neutral in `src/platform/trayintegration.h`. The
+composition root obtains the selected adapter through `Zapret::Platform::createTrayIntegration()`.
+The Linux adapter remains `TrayController` and implements the contract with QtDBus, StatusNotifierItem,
+and DBusMenu. Platform-specific protocol code must not leak into shared application startup or QML.
+
+Implement the Linux tray integration directly on QtDBus in the production QML application. Do not use
 `QSystemTrayIcon` or KDE's `KStatusNotifierItem`: the latter exposes a `QMenu`-based
 context-menu API and would reintroduce a Widgets dependency into the `QGuiApplication` process.
 The production target must remain free of Qt Widgets.

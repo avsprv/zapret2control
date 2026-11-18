@@ -21,7 +21,7 @@
 #include "updatecontroller.h"
 #include "settingsmanager.h"
 #include "autostartcontroller.h"
-#include "traycontroller.h"
+#include "platform/trayintegration.h"
 
 namespace {
 QLocale localeForLanguage(const QString &language)
@@ -52,7 +52,8 @@ int main(int argc, char *argv[])
     ApplicationController controller(Zapret::Platform::createBackend());
     SettingsManager settingsManager;
     AutostartController autostartController;
-    TrayController trayController;
+    TrayIntegration *trayController = Zapret::Platform::createTrayIntegration();
+    trayController->setParent(&app);
     const auto applyColorScheme = [&settingsManager] {
         Qt::ColorScheme scheme = Qt::ColorScheme::Unknown;
         if (settingsManager.theme() == QLatin1String("light"))
@@ -98,7 +99,7 @@ int main(int argc, char *argv[])
                      &controller, [&] { controller.refresh(); });
 
     const auto updateTrayState = [&] {
-        trayController.setServiceState(controller.serviceState(),
+        trayController->setServiceState(controller.serviceState(),
                                        controller.serviceStateCode(),
                                        controller.serviceActive(),
                                        controller.operationsBusy());
@@ -106,9 +107,9 @@ int main(int argc, char *argv[])
     updateTrayState();
     QObject::connect(&controller, &ApplicationController::serviceStateChanged, &app, updateTrayState);
     QObject::connect(&controller, &ApplicationController::operationsBusyChanged, &app, updateTrayState);
-    QObject::connect(&trayController, &TrayController::startRequested,
+    QObject::connect(trayController, &TrayIntegration::startRequested,
                      &controller, &ApplicationController::startService);
-    QObject::connect(&trayController, &TrayController::stopRequested,
+    QObject::connect(trayController, &TrayIntegration::stopRequested,
                      &controller, &ApplicationController::stopService);
 
     const QLocale initialLocale = localeForLanguage(settingsManager.language());
@@ -120,7 +121,7 @@ int main(int argc, char *argv[])
         {QStringLiteral("appController"), QVariant::fromValue(static_cast<QObject *>(&controller))},
         {QStringLiteral("settingsManager"), QVariant::fromValue(static_cast<QObject *>(&settingsManager))},
         {QStringLiteral("autostartController"), QVariant::fromValue(static_cast<QObject *>(&autostartController))},
-        {QStringLiteral("trayController"), QVariant::fromValue(static_cast<QObject *>(&trayController))},
+        {QStringLiteral("trayController"), QVariant::fromValue(static_cast<QObject *>(trayController))},
         {QStringLiteral("configController"), QVariant::fromValue(static_cast<QObject *>(&configController))},
         {QStringLiteral("profileController"), QVariant::fromValue(static_cast<QObject *>(&profileController))},
         {QStringLiteral("logsController"), QVariant::fromValue(static_cast<QObject *>(&logsController))},
@@ -139,43 +140,43 @@ int main(int argc, char *argv[])
     QObject *rootWindow = engine.rootObjects().constFirst();
     if (auto *window = qobject_cast<QWindow *>(rootWindow)) {
         QObject::connect(&blockcheckController, &BlockcheckJobController::scanFinished,
-                         &app, [window, &trayController](int found, bool canceled) {
+                         &app, [window, trayController](int found, bool canceled) {
             if (!canceled && !window->isVisible()) {
                 const QString title = QCoreApplication::translate("Main", "Zapret2 Control");
                 const QString message = QCoreApplication::translate(
                     "Main", "Подбор завершён, найдено стратегий: %1").arg(found);
-                trayController.showNotification(title, message);
+                trayController->showNotification(title, message);
             }
         });
         QObject::connect(&updateController, &UpdateController::updateAvailable,
-                         &app, [window, &trayController](const QString &tag) {
+                         &app, [window, trayController](const QString &tag) {
             if (!window->isVisible()) {
                 const QString title = QCoreApplication::translate("Main", "Zapret2 Control");
                 const QString message = QCoreApplication::translate(
                     "Main", "Доступна новая версия zapret2: %1").arg(tag);
-                trayController.showNotification(title, message);
+                trayController->showNotification(title, message);
             }
         });
     }
-    QObject::connect(&trayController, &TrayController::activateRequested, &app, [rootWindow] {
+    QObject::connect(trayController, &TrayIntegration::activateRequested, &app, [rootWindow] {
         QMetaObject::invokeMethod(rootWindow, "toggleWindow");
     });
-    QObject::connect(&trayController, &TrayController::settingsRequested, &app, [rootWindow] {
+    QObject::connect(trayController, &TrayIntegration::settingsRequested, &app, [rootWindow] {
         QMetaObject::invokeMethod(rootWindow, "openSettings");
     });
-    QObject::connect(&trayController, &TrayController::quitRequested, &app, [rootWindow] {
+    QObject::connect(trayController, &TrayIntegration::quitRequested, &app, [rootWindow] {
         QMetaObject::invokeMethod(rootWindow, "requestQuit");
     });
-    QObject::connect(&trayController, &TrayController::watcherAvailableChanged, &app, [rootWindow, &trayController] {
-        if (!trayController.watcherAvailable())
+    QObject::connect(trayController, &TrayIntegration::watcherAvailableChanged, &app, [rootWindow, trayController] {
+        if (!trayController->watcherAvailable())
             QMetaObject::invokeMethod(rootWindow, "showWindow");
     });
-    QObject::connect(&trayController, &TrayController::registrationFailedChanged, &app,
-                     [rootWindow, &trayController] {
-        if (trayController.registrationFailed())
+    QObject::connect(trayController, &TrayIntegration::registrationFailedChanged, &app,
+                     [rootWindow, trayController] {
+        if (trayController->registrationFailed())
             QMetaObject::invokeMethod(rootWindow, "showWindow");
     });
-    if (startMinimized && (!trayController.watcherAvailable() || trayController.registrationFailed()))
+    if (startMinimized && (!trayController->watcherAvailable() || trayController->registrationFailed()))
         QMetaObject::invokeMethod(rootWindow, "showWindow");
 
     QObject::connect(&settingsManager, &SettingsManager::languageChanged, &app, [&]() {

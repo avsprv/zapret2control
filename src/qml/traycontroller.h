@@ -1,6 +1,7 @@
 #pragma once
 
-#include <QObject>
+#include "platform/trayintegration.h"
+
 #include <QDBusConnection>
 #include <QString>
 
@@ -9,33 +10,21 @@ class QEvent;
 class StatusNotifierItem;
 class DBusMenu;
 
-class TrayController final : public QObject
+class TrayController final : public TrayIntegration
 {
     Q_OBJECT
-    Q_PROPERTY(bool watcherAvailable READ watcherAvailable NOTIFY watcherAvailableChanged)
-    Q_PROPERTY(bool registered READ registered NOTIFY registeredChanged)
-    Q_PROPERTY(bool registrationFailed READ registrationFailed NOTIFY registrationFailedChanged)
 
 public:
     explicit TrayController(QObject *parent = nullptr);
     ~TrayController() override;
 
-    void setServiceState(const QString &state, const QString &stateCode, bool active, bool busy);
-    void showNotification(const QString &title, const QString &message);
+    void setServiceState(const QString &state, const QString &stateCode,
+                         bool active, bool busy) override;
+    void showNotification(const QString &title, const QString &message) override;
 
-    bool watcherAvailable() const;
-    bool registered() const;
-    bool registrationFailed() const;
-
-signals:
-    void watcherAvailableChanged();
-    void registeredChanged();
-    void registrationFailedChanged();
-    void activateRequested();
-    void settingsRequested();
-    void quitRequested();
-    void startRequested();
-    void stopRequested();
+    bool watcherAvailable() const override;
+    bool registered() const override;
+    bool registrationFailed() const override;
 
 private:
     bool eventFilter(QObject *watched, QEvent *event) override;

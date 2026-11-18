@@ -56,18 +56,12 @@ void ConfigController::startOperation(PlatformOperation *operation, OperationKin
 
     m_operation = operation;
     m_operationOutput.clear();
-    m_operationError.clear();
     m_pendingInput = input;
 
     connect(operation, &PlatformOperation::standardOutputReceived, this,
             [this, operation](const QByteArray &data) {
         if (m_operation == operation)
             m_operationOutput.append(data);
-    });
-    connect(operation, &PlatformOperation::standardErrorReceived, this,
-            [this, operation](const QByteArray &data) {
-        if (m_operation == operation)
-            m_operationError.append(data);
     });
     connect(operation, &PlatformOperation::finished, this,
             [this, operation, kind](const OperationResult &result) {
@@ -83,25 +77,31 @@ void ConfigController::handleOperationFinished(PlatformOperation *operation,
         return;
 
     const QByteArray output = m_operationOutput;
-    const QString error = QString::fromUtf8(m_operationError).trimmed();
     const QByteArray input = m_pendingInput;
     m_operation = nullptr;
     m_operationOutput.clear();
-    m_operationError.clear();
     m_pendingInput.clear();
     setBusy(false);
 
     if (!result.succeeded()) {
-        if (!error.isEmpty()) {
-            setStatus(error);
-        } else if (result.status == OperationStatus::AuthorizationDenied) {
+        switch (result.status) {
+        case OperationStatus::AuthorizationDenied:
             setStatus(tr("Операция отменена: авторизация не выполнена."));
-        } else if (result.status == OperationStatus::TimedOut) {
+            break;
+        case OperationStatus::TimedOut:
             setStatus(tr("Операция не завершилась за отведённое время."));
-        } else if (result.status == OperationStatus::Unavailable) {
+            break;
+        case OperationStatus::Unavailable:
             setStatus(tr("Привилегированный helper недоступен."));
-        } else {
-            setStatus(tr("Операция не выполнена (код %1).").arg(result.nativeCode));
+            break;
+        case OperationStatus::ProtocolError:
+            setStatus(tr("Операция прервана: нарушены ограничения обмена данными."));
+            break;
+        case OperationStatus::Failed:
+        case OperationStatus::Succeeded:
+        default:
+            setStatus(tr("Операция не выполнена."));
+            break;
         }
         return;
     }
@@ -122,9 +122,10 @@ void ConfigController::handleOperationFinished(PlatformOperation *operation,
         setStatus(tr("Конфигурация загружена. Перед сохранением будет проверен синтаксис и создана резервная копия."));
     } else if (kind == OperationKind::Save) {
         m_originalBytes = input;
-        setStatus(QString::fromUtf8(output).trimmed());
+        Q_UNUSED(output)
+        setStatus(tr("Конфигурация сохранена. Резервная копия создана."));
     } else {
-        setStatus(QString::fromUtf8(output).trimmed());
+        setStatus(tr("Резервная копия восстановлена."));
         read();
     }
 }

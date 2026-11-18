@@ -83,7 +83,7 @@ void TestProfileController::rejectsOversizedConfigOutput()
     controller.read();
     QTRY_VERIFY_WITH_TIMEOUT(!controller.busy(), 1000);
     QVERIFY(!controller.loaded());
-    QCOMPARE(controller.status(), QStringLiteral("Операция не выполнена."));
+    QCOMPARE(controller.status(), QStringLiteral("Не удалось прочитать конфигурацию (код 0)."));
 }
 
 void TestProfileController::loadsAndSavesProfileMutations()
@@ -159,7 +159,7 @@ void TestProfileController::staleConfigIsNeverOverwritten()
     controller.save();
     QTRY_VERIFY_WITH_TIMEOUT(!controller.busy(), 1000);
     QVERIFY(controller.dirty());
-    QCOMPARE(controller.status(), QStringLiteral("Операция не выполнена."));
+    QCOMPARE(controller.status(), QStringLiteral("Запись не выполнена (код 9)."));
     QCOMPARE(operations.contents, externallyChanged);
 }
 

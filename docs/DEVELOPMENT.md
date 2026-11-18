@@ -4,7 +4,7 @@
 
 - Production-приложение использует Qt Quick и KDE Kirigami 6. Точка входа — `src/qml/main.cpp`, корневой интерфейс — `src/qml/Main.qml`.
 - `zapret2control` — единственная production-цель; отдельной preview-цели и Qt Widgets GUI больше нет. Текущие критерии завершения миграции описаны в [MIGRATION_QML_KIRIGAMI.md](MIGRATION_QML_KIRIGAMI.md).
-- Повторно используемая прикладная логика и интеграции с системой размещаются в `src/backend/`. Контроллеры QML — адаптеры между UI и backend; они не должны дублировать доменную логику.
+- Повторно используемая прикладная логика и общие backend-контракты размещаются в `src/backend/`. Реализации ОС и выбор платформенных адаптеров находятся в `src/platform/`; создание выполняется в composition root через platform factory. Контроллеры QML — адаптеры между UI и backend; они не должны дублировать доменную логику.
 - GUI работает **без root**. Привилегированные действия выполняет `zapret2control-helper` через `pkexec` и Polkit.
 - QML не запускает shell-команды, не обращается к привилегированным файлам и не вызывает `pkexec` напрямую.
 - Upstream подключён как Git submodule (`third_party/zapret2`) и не изменяется в рамках обычной разработки приложения.
@@ -23,7 +23,8 @@ packaging/
   fedora/               spec для RPM
   helper/               привилегированный helper и его модули
 src/
-  backend/              прикладная логика и системные адаптеры
+  backend/              прикладная логика и общие backend-контракты
+  platform/             платформенные реализации и composition root / factory
   qml/
     components/         общие переиспользуемые QML-компоненты
     pages/              страницы production-интерфейса Kirigami

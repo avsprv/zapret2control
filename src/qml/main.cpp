@@ -20,7 +20,7 @@
 #include "listscontroller.h"
 #include "updatecontroller.h"
 #include "settingsmanager.h"
-#include "autostartcontroller.h"
+#include "platform/autostartintegration.h"
 #include "platform/trayintegration.h"
 
 namespace {
@@ -51,7 +51,8 @@ int main(int argc, char *argv[])
 
     ApplicationController controller(Zapret::Platform::createBackend());
     SettingsManager settingsManager;
-    AutostartController autostartController;
+    AutostartIntegration *autostartController = Zapret::Platform::createAutostartIntegration();
+    autostartController->setParent(&app);
     TrayIntegration *trayController = Zapret::Platform::createTrayIntegration();
     trayController->setParent(&app);
     const auto applyColorScheme = [&settingsManager] {
@@ -120,7 +121,7 @@ int main(int argc, char *argv[])
         {QStringLiteral("startMinimized"), startMinimized},
         {QStringLiteral("appController"), QVariant::fromValue(static_cast<QObject *>(&controller))},
         {QStringLiteral("settingsManager"), QVariant::fromValue(static_cast<QObject *>(&settingsManager))},
-        {QStringLiteral("autostartController"), QVariant::fromValue(static_cast<QObject *>(&autostartController))},
+        {QStringLiteral("autostartController"), QVariant::fromValue(static_cast<QObject *>(autostartController))},
         {QStringLiteral("trayController"), QVariant::fromValue(static_cast<QObject *>(trayController))},
         {QStringLiteral("configController"), QVariant::fromValue(static_cast<QObject *>(&configController))},
         {QStringLiteral("profileController"), QVariant::fromValue(static_cast<QObject *>(&profileController))},

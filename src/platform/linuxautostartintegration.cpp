@@ -1,4 +1,4 @@
-#include "autostartcontroller.h"
+#include "linuxautostartintegration.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -45,40 +45,40 @@ bool fileHasExactContents(const QString &path, const QByteArray &expected)
 }
 } // namespace
 
-AutostartController::AutostartController(QObject *parent, const QString &autostartDirectory,
-                                         const QString &executablePath)
-    : QObject(parent)
+LinuxAutostartIntegration::LinuxAutostartIntegration(QObject *parent,
+                                                     const QString &autostartDirectory,
+                                                     const QString &executablePath)
+    : AutostartIntegration(parent)
     , m_autostartDirectory(autostartDirectory.isEmpty()
           ? QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + QStringLiteral("/autostart")
           : autostartDirectory)
     , m_executablePath(executablePath.isEmpty() ? QCoreApplication::applicationFilePath() : executablePath)
 {
-
 }
 
-bool AutostartController::enabled() const
+bool LinuxAutostartIntegration::enabled() const
 {
     return isManagedEntry();
 }
 
-QString AutostartController::errorMessage() const
+QString LinuxAutostartIntegration::errorMessage() const
 {
     return m_errorMessage;
 }
 
-QString AutostartController::entryPath() const
+QString LinuxAutostartIntegration::entryPath() const
 {
     return QDir(m_autostartDirectory).filePath(QStringLiteral("zapret2control.desktop"));
 }
 
-bool AutostartController::isManagedEntry() const
+bool LinuxAutostartIntegration::isManagedEntry() const
 {
     if (m_executablePath.isEmpty() || !QFileInfo(m_executablePath).isAbsolute())
         return false;
     return fileHasExactContents(entryPath(), currentDesktopEntry(m_executablePath).toUtf8());
 }
 
-void AutostartController::setError(const QString &message)
+void LinuxAutostartIntegration::setError(const QString &message)
 {
     if (m_errorMessage == message)
         return;
@@ -86,7 +86,7 @@ void AutostartController::setError(const QString &message)
     emit errorMessageChanged();
 }
 
-void AutostartController::setEnabled(bool enabled)
+void LinuxAutostartIntegration::setEnabled(bool enabled)
 {
     const QFileInfo info(entryPath());
     if (enabled) {

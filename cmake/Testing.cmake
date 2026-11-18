@@ -20,11 +20,12 @@ if(BUILD_TESTING)
     target_compile_definitions(test_zapretcompatibility PRIVATE QZAPRET_HELPER_PATH="/nonexistent" QZAPRET_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}" QZAPRET_UPSTREAM_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/third_party/zapret2")
     add_test(NAME zapretcompatibility COMMAND test_zapretcompatibility)
 
-    qt_add_executable(test_autostartcontroller tests/test_autostartcontroller.cpp
-        src/qml/autostartcontroller.cpp src/qml/autostartcontroller.h)
-    target_include_directories(test_autostartcontroller PRIVATE src src/qml)
-    target_link_libraries(test_autostartcontroller PRIVATE Qt6::Test Qt6::Core)
-    add_test(NAME autostart_controller COMMAND test_autostartcontroller)
+    qt_add_executable(test_linuxautostartintegration tests/test_linuxautostartintegration.cpp
+        src/platform/linuxautostartintegration.cpp src/platform/linuxautostartintegration.h
+        src/platform/autostartintegration.h)
+    target_include_directories(test_linuxautostartintegration PRIVATE src)
+    target_link_libraries(test_linuxautostartintegration PRIVATE Qt6::Test Qt6::Core)
+    add_test(NAME linux_autostart_integration COMMAND test_linuxautostartintegration)
 
     qt_add_executable(test_settingsmanager tests/test_settingsmanager.cpp
         src/qml/settingsmanager.cpp src/qml/settingsmanager.h)

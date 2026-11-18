@@ -29,8 +29,41 @@ jobs:
 
           def canonical_catalog(path):
               root = ET.parse(path).getroot()
+
               for location in root.iter("location"):
                   location.attrib.pop("line", None)
+
+              # Qt Linguist may reorder equivalent context, message, and location
+              # elements. Compare catalog meaning rather than incidental XML order.
+              for context in root.findall("context"):
+                  for message in context.findall("message"):
+                      locations = message.findall("location")
+                      for location in locations:
+                          message.remove(location)
+                      for location in sorted(
+                          locations, key=lambda item: tuple(sorted(item.attrib.items()))
+                      ):
+                          message.append(location)
+
+                  messages = context.findall("message")
+                  for message in messages:
+                      context.remove(message)
+                  for message in sorted(
+                      messages,
+                      key=lambda item: (
+                          item.findtext("source", ""),
+                          item.findtext("comment", ""),
+                          item.findtext("translation", ""),
+                      ),
+                  ):
+                      context.append(message)
+
+              contexts = root.findall("context")
+              for context in contexts:
+                  root.remove(context)
+              for context in sorted(contexts, key=lambda item: item.findtext("name", "")):
+                  root.append(context)
+
               return ET.tostring(root, encoding="utf-8")
 
           before = canonical_catalog("/tmp/zapret2control_en.ts.before")

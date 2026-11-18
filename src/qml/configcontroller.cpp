@@ -95,7 +95,7 @@ void ConfigController::handleOperationFinished(PlatformOperation *operation,
             setStatus(tr("Привилегированный helper недоступен."));
             break;
         case OperationStatus::ProtocolError:
-            setStatus(tr("Операция прервана: нарушены ограничения обмена данными."));
+            setStatus(tr("Операция не выполнена."));
             break;
         case OperationStatus::Failed:
         case OperationStatus::Succeeded:
@@ -122,8 +122,8 @@ void ConfigController::handleOperationFinished(PlatformOperation *operation,
         setStatus(tr("Конфигурация загружена. Перед сохранением будет проверен синтаксис и создана резервная копия."));
     } else if (kind == OperationKind::Save) {
         m_originalBytes = input;
-        Q_UNUSED(output)
-        setStatus(tr("Конфигурация сохранена. Резервная копия создана."));
+        Q_UNUSED(output);
+        setStatus(tr("Конфигурация сохранена."));
     } else {
         setStatus(tr("Резервная копия восстановлена."));
         read();

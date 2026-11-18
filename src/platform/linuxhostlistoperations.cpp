@@ -185,10 +185,11 @@ PlatformOperation *LinuxHostListOperations::startHelperOperation(
     });
 
     connect(process, &QProcess::errorOccurred, operation,
-            [process, operation](QProcess::ProcessError error) {
+            [process, operation, timeout](QProcess::ProcessError error) {
         if (error != QProcess::FailedToStart || operation->isFinished())
             return;
 
+        timeout->stop();
         operation->finish({OperationStatus::Unavailable, static_cast<int>(error),
                            QStringLiteral("helper.start_failed")});
         process->deleteLater();

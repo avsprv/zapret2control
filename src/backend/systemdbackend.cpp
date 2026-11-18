@@ -275,9 +275,10 @@ void SystemdBackend::startNextUnitAction()
             [this, proc, reportResult, completed, timeout](QProcess::ProcessError error) {
         if (error == QProcess::FailedToStart && !*completed) {
             timeout->stop();
-            emit errorOccurred(tr("Не удалось запустить операцию systemd: %1").arg(proc->errorString()));
+            const QString message =
+                tr("Не удалось запустить операцию systemd: %1").arg(proc->errorString());
+            emit errorOccurred(message);
             *completed = true;
-            const QString message = proc->errorString();
             proc->deleteLater(); // finished() после FailedToStart не приходит
             reportResult(false, Zapret::Backend::OperationStatus::Failed, message);
         }

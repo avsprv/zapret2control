@@ -580,6 +580,26 @@
 <context>
     <name>ConfigController</name>
     <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Операция недоступна на этой платформе.</source>
+        <translation>Operation is unavailable on this platform.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Операция отменена: авторизация не выполнена.</source>
+        <translation>Operation canceled: authorization was not completed.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Операция не завершилась за отведённое время.</source>
+        <translation>The operation did not complete within the allowed time.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Привилегированный helper недоступен.</source>
+        <translation>The privileged helper is unavailable.</translation>
+    </message>
+    <message>
         <location filename="../src/qml/configcontroller.cpp" line="68"/>
         <source>Операция не выполнена (код %1).</source>
         <translation>Operation failed (exit code %1).</translation>
@@ -593,11 +613,6 @@
         <location filename="../src/qml/configcontroller.cpp" line="83"/>
         <source>Конфигурация загружена. Перед сохранением будет проверен синтаксис и создана резервная копия.</source>
         <translation>Configuration loaded. Syntax will be checked and a backup will be created before saving.</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/configcontroller.cpp" line="100"/>
-        <source>Не удалось запустить привилегированный helper: %1</source>
-        <translation>Could not start the privileged helper: %1</translation>
     </message>
     <message>
         <location filename="../src/qml/configcontroller.cpp" line="109"/>
@@ -635,6 +650,11 @@
         <location filename="../src/qml/configcontroller.cpp" line="160"/>
         <source>Сохранение отменено: shell-синтаксис не прошёл проверку.</source>
         <translation>Save canceled: shell syntax validation failed.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Не удалось вычислить контрольную сумму исходной конфигурации.</source>
+        <translation>Could not calculate the checksum of the original configuration.</translation>
     </message>
     <message>
         <location filename="../src/qml/configcontroller.cpp" line="166"/>

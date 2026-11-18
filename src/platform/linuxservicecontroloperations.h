@@ -6,7 +6,7 @@
 
 namespace Zapret::Platform {
 
-class LinuxServiceControlOperations final : public ServiceControlOperations
+class LinuxServiceControlOperations final : public QObject, public ServiceControlOperations
 {
     Q_OBJECT
 

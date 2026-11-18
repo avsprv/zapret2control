@@ -52,7 +52,8 @@ int main(int argc, char *argv[])
     ApplicationController controller(Zapret::Platform::createBackend());
     SettingsManager settingsManager;
     AutostartController autostartController;
-    TrayIntegration *trayController = Zapret::Platform::createTrayIntegration();\n    trayController->setParent(&app);
+    TrayIntegration *trayController = Zapret::Platform::createTrayIntegration();
+    trayController->setParent(&app);
     const auto applyColorScheme = [&settingsManager] {
         Qt::ColorScheme scheme = Qt::ColorScheme::Unknown;
         if (settingsManager.theme() == QLatin1String("light"))
@@ -148,12 +149,12 @@ int main(int argc, char *argv[])
             }
         });
         QObject::connect(&updateController, &UpdateController::updateAvailable,
-                         &app, [window, &trayController](const QString &tag) {
+                         &app, [window, trayController](const QString &tag) {
             if (!window->isVisible()) {
                 const QString title = QCoreApplication::translate("Main", "Zapret2 Control");
                 const QString message = QCoreApplication::translate(
                     "Main", "Доступна новая версия zapret2: %1").arg(tag);
-                trayController.showNotification(title, message);
+                trayController->showNotification(title, message);
             }
         });
     }
@@ -163,19 +164,19 @@ int main(int argc, char *argv[])
     QObject::connect(trayController, &TrayIntegration::settingsRequested, &app, [rootWindow] {
         QMetaObject::invokeMethod(rootWindow, "openSettings");
     });
-    QObject::connect(&trayController, &TrayController::quitRequested, &app, [rootWindow] {
+    QObject::connect(trayController, &TrayIntegration::quitRequested, &app, [rootWindow] {
         QMetaObject::invokeMethod(rootWindow, "requestQuit");
     });
-    QObject::connect(&trayController, &TrayController::watcherAvailableChanged, &app, [rootWindow, trayController] {
+    QObject::connect(trayController, &TrayIntegration::watcherAvailableChanged, &app, [rootWindow, trayController] {
         if (!trayController->watcherAvailable())
             QMetaObject::invokeMethod(rootWindow, "showWindow");
     });
-    QObject::connect(&trayController, &TrayController::registrationFailedChanged, &app,
-                     [rootWindow, &trayController] {
+    QObject::connect(trayController, &TrayIntegration::registrationFailedChanged, &app,
+                     [rootWindow, trayController] {
         if (trayController->registrationFailed())
             QMetaObject::invokeMethod(rootWindow, "showWindow");
     });
-    if (startMinimized && (!trayController.watcherAvailable() || trayController.registrationFailed()))
+    if (startMinimized && (!trayController->watcherAvailable() || trayController->registrationFailed()))
         QMetaObject::invokeMethod(rootWindow, "showWindow");
 
     QObject::connect(&settingsManager, &SettingsManager::languageChanged, &app, [&]() {

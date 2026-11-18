@@ -36,9 +36,9 @@ QList<Zapret::Backend::CapabilityInfo> SystemdBackend::capabilities() const
         {Capability::Stop, CapabilityAvailability::Available, true, {}},
         {Capability::BootEnablement, CapabilityAvailability::Available, true, {}},
         {Capability::Configuration, CapabilityAvailability::Unsupported, false,
-         tr("Configuration is managed by a separate platform service.")},
+         tr("Управление конфигурацией выполняется отдельным сервисом платформы.")},
         {Capability::Diagnostics, CapabilityAvailability::Unsupported, false,
-         tr("Diagnostics are provided by a separate platform service.")}
+         tr("Диагностика предоставляется отдельным сервисом платформы.")}
     };
 }
 

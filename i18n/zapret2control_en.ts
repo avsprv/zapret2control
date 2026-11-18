@@ -1691,16 +1691,7 @@
         <source>Ошибка systemctl: %1</source>
         <translation>systemctl error: %1</translation>
     </message>
-    <message>
-        <location filename="../src/backend/systemdbackend.cpp" line="208"/>
-        <source>Операция не выполнена (код %1): %2</source>
-        <translation>Operation failed (code %1): %2</translation>
-    </message>
-    <message>
-        <location filename="../src/backend/systemdbackend.cpp" line="217"/>
-        <source>Не удалось запустить операцию systemd: %1</source>
-        <translation>Failed to start the systemd operation: %1</translation>
-    </message>
+
     <message>
         <location filename="../src/backend/systemdbackend.cpp" line="40"/>
         <source>Превышено время ожидания ответа systemctl.</source>
@@ -1720,6 +1711,22 @@
         <location filename="../src/backend/systemdbackend.cpp" line="265"/>
         <source>Авторизация для операции systemd отклонена.</source>
         <translation>Authorization for the systemd operation was denied.</translation>
+    </message>
+    <message>
+        <source>Не удалось запустить операцию systemd.</source>
+        <translation>Could not start the systemd operation.</translation>
+    </message>
+    <message>
+        <source>Некорректный ответ systemctl.</source>
+        <translation>systemctl returned an invalid response.</translation>
+    </message>
+    <message>
+        <source>Некорректный ответ systemd.</source>
+        <translation>The systemd operation returned an invalid response.</translation>
+    </message>
+    <message>
+        <source>Операция не выполнена (код %1).</source>
+        <translation>Operation failed (exit code %1).</translation>
     </message>
 </context>
 <context>

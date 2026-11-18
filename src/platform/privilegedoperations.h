@@ -53,6 +53,47 @@ struct BlockcheckOptions {
     bool http3 = false;
     int repeats = 1;
     BlockcheckScanLevel scanLevel = BlockcheckScanLevel::Standard;
+
+    bool isValid() const
+    {
+        if (domains.isEmpty() || domains.size() > 10 || repeats < 1 || repeats > 10)
+            return false;
+
+        static const QRegularExpression domainPattern(
+            QStringLiteral(R"(^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$)"));
+
+        for (QString domain : domains) {
+            if (domain.endsWith(QLatin1Char('.')))
+                domain.chop(1);
+            if (domain.isEmpty() || domain.size() > 253)
+                return false;
+
+            const QStringList labels = domain.split(QLatin1Char('.'));
+            for (const QString &label : labels) {
+                if (!domainPattern.match(label).hasMatch())
+                    return false;
+            }
+        }
+
+        switch (ipVersion) {
+        case BlockcheckIpVersion::IPv4:
+        case BlockcheckIpVersion::IPv6:
+        case BlockcheckIpVersion::DualStack:
+            break;
+        default:
+            return false;
+        }
+
+        switch (scanLevel) {
+        case BlockcheckScanLevel::VeryQuick:
+        case BlockcheckScanLevel::Quick:
+        case BlockcheckScanLevel::Standard:
+        case BlockcheckScanLevel::Force:
+            return true;
+        default:
+            return false;
+        }
+    }
 };
 
 struct OperationUuid {

@@ -5,10 +5,18 @@
 #include <QTimer>
 
 ApplicationController::ApplicationController(QObject *parent)
+    : ApplicationController(new SystemdBackend, parent)
+{
+}
+
+ApplicationController::ApplicationController(ZapretBackend *backend, QObject *parent)
     : QObject(parent)
-    , m_backend(new SystemdBackend(this))
+    , m_backend(backend)
     , m_refreshTimer(new QTimer(this))
 {
+    Q_ASSERT(m_backend);
+    m_backend->setParent(this);
+
     m_refreshTimer->setInterval(3000);
     connect(m_refreshTimer, &QTimer::timeout, this, &ApplicationController::refresh);
     m_refreshTimer->start();

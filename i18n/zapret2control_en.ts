@@ -1728,6 +1728,10 @@
         <source>Операция не выполнена (код %1).</source>
         <translation>Operation failed (exit code %1).</translation>
     </message>
+    <message>
+        <source>Не удалось запустить systemctl.</source>
+        <translation>Could not start systemctl.</translation>
+    </message>
 </context>
 <context>
     <name>UpdateChecker</name>

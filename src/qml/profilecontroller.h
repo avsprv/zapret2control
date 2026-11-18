@@ -2,10 +2,11 @@
 
 #include <QObject>
 #include <QByteArray>
-#include <QProcess>
 #include <QVariant>
 #include <QVector>
+
 #include "profileanalyzer.h"
+#include "platform/privilegedoperations.h"
 
 class ProfileController final : public QObject
 {
@@ -17,7 +18,8 @@ class ProfileController final : public QObject
     Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
     Q_PROPERTY(bool dirty READ dirty NOTIFY dirtyChanged)
 public:
-    explicit ProfileController(QObject *parent = nullptr);
+    explicit ProfileController(Zapret::Platform::ConfigurationOperations *operations,
+                               QObject *parent = nullptr);
     QVariantList profiles() const;
     int selectedIndex() const;
     void setSelectedIndex(int index);
@@ -44,10 +46,15 @@ private:
     void setDirty(bool value);
     void setLoaded(bool value);
     bool validArguments(const QStringList &arguments, QString *error) const;
-    void startWrite(const QString &content);
+    void startOperation(Zapret::Platform::PlatformOperation *operation, bool writing,
+                        const QByteArray &input = {});
+    void finishOperation(Zapret::Platform::PlatformOperation *operation, bool writing,
+                         const Zapret::Platform::OperationResult &result);
+    Zapret::Platform::ConfigurationOperations *m_operations = nullptr;
+    Zapret::Platform::PlatformOperation *m_operation = nullptr;
     QByteArray m_configBytes;
     QByteArray m_output;
-    QByteArray m_error;
+    QByteArray m_configInput;
     QString m_config;
     QVector<ProfileAnalyzer::Profile> m_profiles;
     QString m_status;
@@ -55,5 +62,4 @@ private:
     bool m_busy = false;
     bool m_loaded = false;
     bool m_dirty = false;
-    QProcess *m_process = nullptr;
 };

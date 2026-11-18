@@ -14,7 +14,7 @@ This audit is based on the upstream primary Russian manual and source files at o
 | Supplementary manual | [docs/manual.en.md](https://github.com/bol-van/zapret2/blob/3bae3d26d741a8f6e0bc4ea651656b4e1a438375/docs/manual.en.md) |
 | `install_easy.sh` | blob `a6b28f187410c076c5f41de67540c50b1fdbccb5`, 834 lines |
 | `blockcheck2.sh` | blob `38905b593c53d2613ef8c7d4a1a8b592631bd9dc`, 2107 lines |
-| `uninstall_easy.sh` (checked to understand the matching lifecycle) | blob available in the upstream tree at the same commit |
+| `uninstall_easy.sh` (checked to understand the matching lifecycle) | blob `365d44a7684576624b526b8eb3f518b9082edb56` |
 
 The project integration skill establishes that the Russian manual is primary, the English manual supplementary, and the implementation authoritative where documentation is incomplete. No material Russian/English discrepancy was found in the areas summarized below. The upstream baseline must be re-verified before implementation or release; `master` is not an immutable dependency reference.
 

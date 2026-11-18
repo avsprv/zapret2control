@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     std::unique_ptr<Zapret::Platform::ConfigurationOperations> configurationOperations(
         Zapret::Platform::createConfigurationOperations());
     ConfigController configController(configurationOperations.get());
-    ProfileController profileController;
+    ProfileController profileController(configurationOperations.get());
     LogsController logsController;
     ListsController listsController;
     BlockcheckJobController blockcheckController;

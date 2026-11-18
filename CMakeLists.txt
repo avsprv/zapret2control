@@ -104,6 +104,7 @@ qt_add_executable(zapret2control
     src/backend/systemdbackend.cpp
     src/backend/systemdbackend.h
     src/backend/zapretbackend.h
+    src/backend/backendtypes.h
     src/backend/helperpath.h
 )
 qt_add_qml_module(zapret2control

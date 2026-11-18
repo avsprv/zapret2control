@@ -19,7 +19,7 @@ def main() -> None:
     postinst = (ROOT / "packaging/debian/postinst").read_text(encoding="utf-8")
     spec = (ROOT / "packaging/fedora/zapret2control.spec").read_text(encoding="utf-8")
     control = (ROOT / "packaging/debian/control").read_text(encoding="utf-8")
-    cmake = (ROOT / "CMakeLists.txt").read_text(encoding="utf-8")
+    cmake = "\n".join((ROOT / path).read_text(encoding="utf-8") for path in ("CMakeLists.txt", "cmake/Testing.cmake"))
     main_cpp = (ROOT / "src/qml/main.cpp").read_text(encoding="utf-8")
     autostart = (ROOT / "src/qml/autostartcontroller.cpp").read_text(encoding="utf-8")
     autostart_tests = (ROOT / "tests/test_autostartcontroller.cpp").read_text(encoding="utf-8")

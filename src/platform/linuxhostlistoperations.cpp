@@ -149,7 +149,7 @@ PlatformOperation *LinuxHostListOperations::startHelperOperation(
     });
 
     connect(process, &QProcess::readyReadStandardOutput, operation,
-            [process, operation, standardOutputLimit, outputSize, outputExceeded] {
+            [process, operation, standardOutputLimit, outputSize, outputExceeded, missingListIsSuccess] {
         const QByteArray data = process->readAllStandardOutput();
         if (data.isEmpty() || operation->isFinished())
             return;
@@ -161,7 +161,8 @@ PlatformOperation *LinuxHostListOperations::startHelperOperation(
             return;
         }
 
-        operation->reportStandardOutput(data);
+        if (missingListIsSuccess)
+            operation->reportStandardOutput(data);
     });
 
     connect(process, &QProcess::readyReadStandardError, operation,
@@ -205,7 +206,7 @@ PlatformOperation *LinuxHostListOperations::startHelperOperation(
             *outputSize += remainingOutput.size();
             if (*outputSize > standardOutputLimit)
                 *outputExceeded = true;
-            else
+            else if (missingListIsSuccess)
                 operation->reportStandardOutput(remainingOutput);
         }
 

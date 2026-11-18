@@ -250,7 +250,7 @@ void SystemdBackend::startNextUnitAction()
         *completed = true;
         timeout->stop();
         const bool success = !*timedOut && code == 0 && status == QProcess::NormalExit;
-        const bool authorizationDenied = !success && !*timedOut && Helper::isAuthDismissed(code);
+        const bool authorizationDenied = !success && !*timedOut && Helper::isAuthorizationDenied(code);
         const auto operationStatus = success
             ? Zapret::Backend::OperationStatus::Succeeded
             : (*timedOut

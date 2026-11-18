@@ -28,16 +28,6 @@ OperationResult resultForActionExitCode(int exitCode)
     return {OperationStatus::Failed, exitCode, QStringLiteral("helper.exit_failed")};
 }
 
-PlatformOperation *completedOperation(QObject *parent, const OperationResult &result)
-{
-    auto *operation = new PlatformOperation(parent);
-    connect(operation, &PlatformOperation::finished, operation, &QObject::deleteLater);
-    QTimer::singleShot(0, operation, [operation, result] {
-        operation->finish(result);
-    });
-    return operation;
-}
-
 } // namespace
 
 LinuxServiceControlOperations::LinuxServiceControlOperations(

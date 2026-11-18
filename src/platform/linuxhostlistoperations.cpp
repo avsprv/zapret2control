@@ -57,7 +57,9 @@ OperationResult resultForExitCode(int exitCode)
 PlatformOperation *completedOperation(QObject *parent, const OperationResult &result)
 {
     auto *operation = new PlatformOperation(parent);
-    operation->finish(result);
+    QTimer::singleShot(0, operation, [operation, result] {
+        operation->finish(result);
+    });
     return operation;
 }
 

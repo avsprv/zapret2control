@@ -16,6 +16,7 @@ private Q_SLOTS:
     void completesExactlyOnce();
     void validatesSha256Digests();
     void validatesUpstreamVersionTags();
+    void validatesBlockcheckOptions();
 };
 
 void TestPlatformOperation::initTestCase()
@@ -102,6 +103,35 @@ void TestPlatformOperation::validatesUpstreamVersionTags()
     QVERIFY(!ValidatedUpstreamVersion::fromTag(QStringLiteral("v1.2.")).has_value());
     QVERIFY(!ValidatedUpstreamVersion::fromTag(QStringLiteral("v1.2-rc1")).has_value());
     QVERIFY(!ValidatedUpstreamVersion::fromTag(QStringLiteral("v123456789012345678901234")).has_value());
+}
+
+void TestPlatformOperation::validatesBlockcheckOptions()
+{
+    BlockcheckOptions options;
+    QVERIFY(options.isValid());
+
+    options.domains = {};
+    QVERIFY(!options.isValid());
+
+    options.domains = {QStringLiteral("example.org"), QStringLiteral("example.net")};
+    options.repeats = 10;
+    QVERIFY(options.isValid());
+
+    options.repeats = 11;
+    QVERIFY(!options.isValid());
+
+    options.repeats = 1;
+    options.domains = {QStringLiteral("bad..example")};
+    QVERIFY(!options.isValid());
+
+    options.domains = {QStringLiteral("-bad.example")};
+    QVERIFY(!options.isValid());
+
+    options.domains = {QStringLiteral("example.org.")};
+    QVERIFY(options.isValid());
+
+    options.domains = {QStringLiteral("пример.рф")};
+    QVERIFY(!options.isValid());
 }
 
 QTEST_GUILESS_MAIN(TestPlatformOperation)

@@ -58,7 +58,7 @@ OperationResult resultForExitCode(int exitCode)
 PlatformOperation *completedOperation(QObject *parent, const OperationResult &result)
 {
     auto *operation = new PlatformOperation(parent);
-    connect(operation, &PlatformOperation::finished, operation, &QObject::deleteLater);
+    QObject::connect(operation, &PlatformOperation::finished, operation, &QObject::deleteLater);
     QTimer::singleShot(0, operation, [operation, result] {
         operation->finish(result);
     });

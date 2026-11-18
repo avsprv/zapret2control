@@ -1,6 +1,7 @@
 #include <QtTest>
 
 #include "platform/privilegedoperation.h"
+#include "platform/privilegedoperations.h"
 
 using namespace Zapret::Platform;
 
@@ -13,6 +14,8 @@ private Q_SLOTS:
     void streamsOutputBeforeCompletion();
     void ignoresOutputAfterCompletion();
     void completesExactlyOnce();
+    void validatesSha256Digests();
+    void validatesUpstreamVersionTags();
 };
 
 void TestPlatformOperation::initTestCase()
@@ -73,6 +76,32 @@ void TestPlatformOperation::completesExactlyOnce()
     const auto result = qvariant_cast<OperationResult>(finishedSpy.constFirst().constFirst());
     QCOMPARE(result.status, OperationStatus::Succeeded);
     QCOMPARE(result.nativeCode, 0);
+}
+
+void TestPlatformOperation::validatesSha256Digests()
+{
+    const QByteArray valid(64, 'a');
+    const auto digest = Sha256Digest::fromHex(valid);
+    QVERIFY(digest.has_value());
+    QCOMPARE(digest->hex(), valid);
+
+    QVERIFY(!Sha256Digest::fromHex(QByteArray(63, 'a')).has_value());
+    QVERIFY(!Sha256Digest::fromHex(QByteArray(64, 'g')).has_value());
+    QVERIFY(!Sha256Digest::fromHex(QByteArray(64, 'A')).has_value());
+}
+
+void TestPlatformOperation::validatesUpstreamVersionTags()
+{
+    const auto version = ValidatedUpstreamVersion::fromTag(QStringLiteral("v1.2.3"));
+    QVERIFY(version.has_value());
+    QCOMPARE(version->tag(), QStringLiteral("v1.2.3"));
+
+    QVERIFY(!ValidatedUpstreamVersion::fromTag(QString()).has_value());
+    QVERIFY(!ValidatedUpstreamVersion::fromTag(QStringLiteral("1.2.3")).has_value());
+    QVERIFY(!ValidatedUpstreamVersion::fromTag(QStringLiteral("v1..2")).has_value());
+    QVERIFY(!ValidatedUpstreamVersion::fromTag(QStringLiteral("v1.2.")).has_value());
+    QVERIFY(!ValidatedUpstreamVersion::fromTag(QStringLiteral("v1.2-rc1")).has_value());
+    QVERIFY(!ValidatedUpstreamVersion::fromTag(QStringLiteral("v123456789012345678901234")).has_value());
 }
 
 QTEST_GUILESS_MAIN(TestPlatformOperation)

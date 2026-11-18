@@ -1,6 +1,7 @@
 #pragma once
 
 #include "backend/zapretbackend.h"
+#include "platform/privilegedoperations.h"
 
 class TrayIntegration;
 class AutostartIntegration;
@@ -10,6 +11,10 @@ namespace Zapret::Platform {
 // Creates the backend implementation selected for the current platform.
 // The caller takes ownership of the returned object.
 ZapretBackend *createBackend();
+
+// Creates the privileged configuration adapter selected for the current platform.
+// The caller takes ownership of the returned object.
+ConfigurationOperations *createConfigurationOperations();
 
 // Creates the desktop tray adapter selected for the current platform.
 // The caller takes ownership of the returned object.

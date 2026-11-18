@@ -10,6 +10,21 @@ if(BUILD_TESTING)
     target_link_libraries(test_privilegedoperation PRIVATE Qt6::Test Qt6::Core)
     add_test(NAME privileged_operation COMMAND test_privilegedoperation)
 
+    qt_add_executable(test_linuxconfigurationoperations
+        tests/test_linuxconfigurationoperations.cpp
+        src/platform/linuxconfigurationoperations.cpp
+        src/platform/linuxconfigurationoperations.h
+        src/platform/privilegedoperation.cpp
+        src/platform/privilegedoperation.h
+        src/platform/privilegedoperations.h
+        src/backend/helperpath.h)
+    target_include_directories(test_linuxconfigurationoperations PRIVATE src)
+    target_link_libraries(test_linuxconfigurationoperations PRIVATE Qt6::Test Qt6::Core)
+    target_compile_definitions(test_linuxconfigurationoperations PRIVATE
+        QZAPRET_HELPER_PATH="/nonexistent")
+    add_test(NAME linux_configuration_operations
+             COMMAND test_linuxconfigurationoperations)
+
     find_program(DBUS_RUN_SESSION_EXECUTABLE dbus-run-session REQUIRED)
     qt_add_executable(test_blockcheck tests/test_blockcheck.cpp
         src/backend/blockcheckrunner.cpp src/backend/blockcheckrunner.h)

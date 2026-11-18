@@ -250,6 +250,31 @@ This is an advanced developer API. The desktop application must preserve module 
 
 The source includes `zapret-obfs.lua`, `zapret-pcap.lua`, and `zapret-tests.lua`. Not every function in these modules has an equivalent dedicated chapter in the manual. Treat these as source-discovered capabilities. Before exposing individual functions as GUI controls, inspect their source, call sites, parameter contracts and tests. Do not claim a documented GUI interface where the manual does not define one.
 
+
+### LUA-06 — Source function catalog for advanced integration
+
+The following function names were enumerated from the six Lua files at the pinned v1.0.7 source revision. This catalog is for preservation, help/search and advanced script authoring. It is not a recommendation to expose every helper as a separate GUI action.
+
+**`zapret-antidpi.lua`:**
+`drop`, `send`, `send_timer_delayed`, `pktmod`, `http_domcase`, `http_hostcase`, `http_methodeol`, `http_unixeol`, `synack_split`, `synack`, `wsize`, `wssize`, `tls_client_hello_clone`, `syndata`, `rst`, `fake`, `multisplit`, `pos_normalize`, `pos_array_normalize`, `multidisorder_send`, `multidisorder`, `multidisorder_legacy`, `hostfakesplit`, `fakedsplit`, `fakeddisorder`, `tcpseg`, `oob`, `udplen`, `dht_dn`.
+
+**`zapret-auto.lua`:**
+`standard_hostkey`, `automate_host_record`, `automate_conn_record`, `automate_failure_counter`, `automate_failure_counter_reset`, `is_dpi_redirect`, `standard_detector_defaults`, `standard_failure_detector`, `standard_success_detector`, `automate_failure_check`, `circular`, `count_strategies`, `cond_true`, `cond_false`, `cond_random`, `cond_payload_str`, `cond_tcp_has_ts`, `cond_lua`, `require_iff`, `condition`, `per_instance_condition`, `stopif`, `repeater`.
+
+**`zapret-obfs.lua`:**
+`wgobfs`, `genkey`, `maybe_encrypted_payload`, `wg_payload_from_size`, `ippxor`, `need_dxor`, `dxor`, `udp2icmp`, `one_byte_arg`, `ictype`, `iccode`, `plxor`, `map_purge`, `synhide`, `make_magic`, `xorhdr`, `ver_magic`, `set_magic`, `clear_magic`.
+
+**`zapret-pcap.lua`:**
+`pcap_write_header`, `pcap_write_packet`, `pcap_write`, `pcap`.
+
+**`zapret-tests.lua`:**
+`test_assert`, `test_run`, `test_all`, `test_crypto`, `test_random`, `test_bop`, `test_hash`, `test_hkdf`, `test_aes`, `test_aes_gcm`, `test_aes_ctr`, `test_ub`, `test_bit`, `test_swap`, `test_ux`, `test_bin`, `test_time`, `test_gzip`, `test_ipstr`, `test_dissect`, `test_csum`, `test_resolve`, `test_get_source_ip`, `test_ifaddrs`, `print_current_time`, `timer_info_print`, `timer_info_print_by_name`, `timer1`, `timer2`, `test_timer`, `test_rawsend`, `rawsend_fail_warning`, `rawsend_dissect_print`, `rawsend_print`.
+
+**`zapret-lib.lua` source function catalog:**
+`luaexec`, `pass`, `pktdebug`, `argdebug`, `posdebug`, `detect_payload_str`, `instance_cutoff_shim`, `cutoff_shim_check`, `apply_arg_prefix`, `apply_execution_plan`, `verdict_aggregate`, `plan_instance_execute_preapplied`, `plan_instance_execute`, `plan_instance_pop`, `plan_clear`, `orchestrate`, `desync_copy`, `replay_execution_plan`, `desync_orchestrator_example`, `pos_counter_overflow`, `pos_get_pos`, `pos_get`, `pos_check_from`, `pos_check_to`, `pos_check_range`, `pos_range_str`, `pos_str`, `barray`, `btable`, `seq_ge`, `seq_gt`, `seq_lt`, `seq_le`, `seq_within`, `is_retransmission`, `rawsend_opts`, `rawsend_opts_base`, `reconstruct_opts`, `desync_opts`, `string2hex`, `has_nonprintable`, `make_readable`, `str_or_hex`, `logical_xor`, `var_debug`, `dbg`, `hexdump`, `hexdump_dlog`, `deepcopy`, `in_list`, `blob_exist`, `blob`, `blob_or_def`, `pattern`, `zero_based_pos`, `delete_pos_1`, `array_search`, `array_field_search`, `find_next_line`, `tls_mod_shim`, `parse_tcp_flags`, `ip_proto_l3`, `ip_proto_l4`, `ip_proto`, `fix_ip_proto`, `find_tcp_option`, `find_ip6_exthdr`, `insert_ip6_exthdr`, `del_ip6_exthdr`, `fix_ip6_next`, `dis_ipsrc`, `dis_ipdst`, `dis_l4_name`, `dis_l4_ports`, `dis_timer_name`, `desync_timer_name`, `dis_reverse`, `dis_reconstruct_l3`, `parse_autottl`, `autottl`, `hop_count_guess`, `autottl_eval`, `apply_fooling`, `prepare_bin`, `ttl_discover`, `move_ts_top`, `apply_ip_id`, `l3_base_len`, `l3_extra_len`, `l3_len`, `l4_base_len`, `l4_extra_len`, `l4_len`, `l3l4_extra_len`, `l3l4_len`, `packet_len`, `rawsend_dissect_ipfrag`, `rawsend_dissect_segmented`, `rawsend_payload_segmented`, `direction_check`, `direction_cutoff_opposite`, `payload_match_filter`, `payload_check`, `replay_drop_key`, `replay_drop_set`, `replay_drop`, `replay_first`, `genhost`, `host_ip`, `host_or_ip`, `update_ifaddrs`, `ip2ifname`, `is_absolute_path`, `append_path`, `writable_file_name`, `wsize_rewrite`, `ipfrag2`, `frag_idx`, `tls_client_hello_mod`, `is_gzip_file`, `gunzip_file`, `gzip_file`, `readfile`, `z_readfile`, `writefile`, `http_dissect_header`, `http_dissect_headers`, `http_dissect_req`, `http_dissect_reply`, `http_reconstruct_headers`, `http_reconstruct_req`, `dissect_url`, `dissect_nld`, `tls_record_data_len`, `tls_record_full`, `tls_record_type`, `is_tls_record`, `tls_handshake_data_len`, `tls_handshake_len`, `tls_handshake_full`, `tls_handshake_type`, `is_tls_handshake_type_hello`, `is_tls_handshake`, `is_tls_hello`, `quic_tvb`, `bquic_tvb`, `tls_dissect_ext`, `len16_header`, `len8_header`, `tls_dissect_handshake`, `tls_dissect_handshake_`, `tls_dissect`, `tls_reconstruct_ext`, `tls_reconstruct_handshake`, `tls_reconstruct`.
+
+The nfqws2 C API is separately documented in the manual under `С интерфейс nfqws2`: base constants, standard blobs, environment variables, logging, IP conversion, bitwise and unsigned arithmetic, integer division, random generation, parsing, cryptography, compression, system functions, packet reconstruction/dissection, conntrack, IP address discovery, packet send/receive, payload markers, TLS modification, instance execution and timer management. Each function signature and platform availability must be taken from the pinned manual/source before creating any GUI or plugin contract.
+
 ## 5. Configuration and profiles
 
 ### CFG-01 — Native config file

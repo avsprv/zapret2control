@@ -1641,12 +1641,12 @@
     <name>SystemdBackend</name>
     <message>
         <location filename="../src/backend/systemdbackend.cpp"/>
-        <source>Configuration is managed by a separate platform service.</source>
-        <translation>Configuration is managed by a separate platform service.</translation>
+        <source>Управление конфигурацией выполняется отдельным сервисом платформы.</source>
+        <translation>Configuration management is provided by a separate platform service.</translation>
     </message>
     <message>
         <location filename="../src/backend/systemdbackend.cpp"/>
-        <source>Diagnostics are provided by a separate platform service.</source>
+        <source>Диагностика предоставляется отдельным сервисом платформы.</source>
         <translation>Diagnostics are provided by a separate platform service.</translation>
     </message>
     <message>

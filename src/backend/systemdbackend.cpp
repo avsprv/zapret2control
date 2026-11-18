@@ -145,6 +145,11 @@ void SystemdBackend::setBootEnabled(bool enabled)
     runUnitAction(enabled ? QStringLiteral("enable") : QStringLiteral("disable"));
 }
 
+void SystemdBackend::setBootEnabled(bool enabled, quint64 requestId)
+{
+    runUnitAction(enabled ? QStringLiteral("enable") : QStringLiteral("disable"), requestId);
+}
+
 void SystemdBackend::runUnitAction(const QString &action, quint64 requestId)
 {
     m_pendingActions.enqueue({action, requestId});

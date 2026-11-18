@@ -1,14 +1,14 @@
 #pragma once
 
-#include <QStringList>
 #include <QProcess>
 #include <QQueue>
+#include <QStringList>
 #include <functional>
 
 #include "zapretbackend.h"
 
-// Управляет апстримным юнитом zapret2.service.
-// Чтение статуса — без привилегий; start/stop/enable/disable — через zapret2control-helper (polkit).
+// Управляет upstream unit zapret2.service.
+// Чтение статуса — без привилегий; start/stop/enable/disable — через helper (polkit).
 class SystemdBackend : public ZapretBackend
 {
     Q_OBJECT
@@ -23,6 +23,7 @@ public:
     void stop() override;
     void stop(quint64 requestId) override;
     void setBootEnabled(bool enabled) override;
+    void setBootEnabled(bool enabled, quint64 requestId) override;
 
 protected:
     virtual int processTimeoutMs(bool privileged) const;
@@ -34,6 +35,7 @@ private:
         QString action;
         quint64 requestId = 0;
     };
+
     void startNextUnitAction();
     void finishRefreshQuery();
     void runUnitAction(const QString &action, quint64 requestId = 0);

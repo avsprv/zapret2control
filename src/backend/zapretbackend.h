@@ -3,8 +3,7 @@
 #include <QObject>
 #include <QString>
 
-// Единственная точка контакта с апстримом zapret2.
-// При смене CLI/юнитов апстрима правится только реализация этого интерфейса.
+// Единственная точка контакта с upstream engine lifecycle.
 class ZapretBackend : public QObject
 {
     Q_OBJECT
@@ -15,15 +14,15 @@ public:
     using QObject::QObject;
     ~ZapretBackend() override = default;
 
-    virtual void refresh() = 0; // асинхронно, результат придёт в сигналах
-    virtual void verifyState() = 0; // отдельная проверка для критических переходов состояния
-    virtual void verifyState(quint64 requestId) = 0; // коррелированный запрос для lifecycle-операций
+    virtual void refresh() = 0;
+    virtual void verifyState() = 0;
+    virtual void verifyState(quint64 requestId) = 0;
     virtual void start() = 0;
     virtual void start(quint64 requestId) = 0;
     virtual void stop() = 0;
     virtual void stop(quint64 requestId) = 0;
-    virtual void setBootEnabled(bool enabled) = 0; // автозапуск сервиса при загрузке системы
-    // TODO: applyProfile(const Profile &) — запись конфига через привилегированный хелпер
+    virtual void setBootEnabled(bool enabled) = 0;
+    virtual void setBootEnabled(bool enabled, quint64 requestId) = 0;
 
 signals:
     void stateChanged(ZapretBackend::State state);

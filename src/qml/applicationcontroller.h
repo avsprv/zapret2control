@@ -43,12 +43,15 @@ signals:
     void operationsBusyChanged();
 
 private:
+    quint64 nextRequestId();
     void setState(ZapretBackend::State state);
     void setServiceActionBusy(bool busy);
 
     ZapretBackend *m_backend = nullptr;
     QTimer *m_refreshTimer = nullptr;
     ZapretBackend::State m_state = ZapretBackend::State::Unknown;
+    quint64 m_nextRequestId = 1;
+    quint64 m_pendingRequestId = 0;
     bool m_bootEnabled = false;
     bool m_operationsBusy = false;
     bool m_serviceActionBusy = false;

@@ -5,7 +5,7 @@
     <name>AboutPage</name>
     <message>
         <location filename="../src/qml/pages/AboutPage.qml" line="7"/>
-        <location filename="../tests/test_i18n.cpp" line="81"/>
+        <location filename="../tests/test_i18n.cpp" line="91"/>
         <source>О программе</source>
         <translation>About</translation>
     </message>
@@ -32,7 +32,7 @@
     <message>
         <location filename="../src/qml/pages/AboutPage.qml" line="40"/>
         <source>Qt 6 — графическая платформа приложения.</source>
-        <translation>Qt 6 is the application's graphical framework.</translation>
+        <translation>Qt 6 is the application&apos;s graphical framework.</translation>
     </message>
     <message>
         <location filename="../src/qml/pages/AboutPage.qml" line="46"/>
@@ -103,22 +103,22 @@
 <context>
     <name>ApplicationController</name>
     <message>
-        <location filename="../src/qml/applicationcontroller.cpp" line="42"/>
+        <location filename="../src/qml/applicationcontroller.cpp" line="54"/>
         <source>Работает</source>
         <translation>Running</translation>
     </message>
     <message>
-        <location filename="../src/qml/applicationcontroller.cpp" line="44"/>
+        <location filename="../src/qml/applicationcontroller.cpp" line="56"/>
         <source>Остановлен</source>
         <translation>Stopped</translation>
     </message>
     <message>
-        <location filename="../src/qml/applicationcontroller.cpp" line="46"/>
+        <location filename="../src/qml/applicationcontroller.cpp" line="58"/>
         <source>Ошибка</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../src/qml/applicationcontroller.cpp" line="49"/>
+        <location filename="../src/qml/applicationcontroller.cpp" line="61"/>
         <source>Неизвестно</source>
         <translation>Unknown</translation>
     </message>
@@ -426,9 +426,9 @@
     <name>BlockcheckPage</name>
     <message>
         <location filename="../src/qml/pages/BlockcheckPage.qml" line="122"/>
-        <location filename="../tests/test_i18n.cpp" line="76"/>
-        <location filename="../tests/test_i18n.cpp" line="91"/>
-        <location filename="../tests/test_i18n.cpp" line="97"/>
+        <location filename="../tests/test_i18n.cpp" line="86"/>
+        <location filename="../tests/test_i18n.cpp" line="101"/>
+        <location filename="../tests/test_i18n.cpp" line="107"/>
         <source>Начать подбор</source>
         <translation>Start scan</translation>
     </message>
@@ -692,7 +692,7 @@
     </message>
     <message>
         <location filename="../src/qml/pages/ConfigPage.qml" line="36"/>
-        <location filename="../tests/test_i18n.cpp" line="83"/>
+        <location filename="../tests/test_i18n.cpp" line="93"/>
         <source>Прочитать</source>
         <translation>Read</translation>
     </message>
@@ -1161,8 +1161,6 @@
 <context>
     <name>Main</name>
     <message>
-        <location filename="../src/qml/Main.qml" line="25"/>
-        <location filename="../src/qml/Main.qml" line="86"/>
         <location filename="../src/qml/main.cpp" line="143"/>
         <location filename="../src/qml/main.cpp" line="152"/>
         <source>Zapret2 Control</source>
@@ -1179,136 +1177,123 @@
         <translation>A new version of zapret2 is available: %1</translation>
     </message>
     <message>
-        <location filename="../src/qml/Main.qml" line="94"/>
-        <location filename="../tests/test_i18n.cpp" line="80"/>
+        <location filename="../tests/test_i18n.cpp" line="90"/>
         <source>Статус</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../src/qml/Main.qml" line="99"/>
+        <location filename="../src/qml/Main.qml" line="95"/>
+        <location filename="../src/qml/Main.qml" line="155"/>
         <source>Конфигурация</source>
         <translation>Configuration</translation>
     </message>
     <message>
-        <location filename="../src/qml/Main.qml" line="104"/>
-        <source>Профили</source>
-        <translation>Profiles</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/Main.qml" line="109"/>
+        <location filename="../src/qml/Main.qml" line="100"/>
+        <location filename="../src/qml/Main.qml" line="173"/>
         <source>Списки</source>
         <translation>Lists</translation>
     </message>
     <message>
-        <location filename="../src/qml/Main.qml" line="114"/>
-        <source>Мониторинг</source>
-        <translation>Monitoring</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/Main.qml" line="119"/>
-        <source>Подбор стратегий</source>
-        <translation>Strategy scan</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/Main.qml" line="124"/>
-        <source>Обновления</source>
-        <translation>Updates</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/Main.qml" line="129"/>
-        <source>Настройки</source>
-        <translation>Settings</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/Main.qml" line="134"/>
+        <location filename="../src/qml/Main.qml" line="125"/>
+        <location filename="../src/qml/Main.qml" line="263"/>
         <source>О программе</source>
         <translation>About</translation>
     </message>
     <message>
-        <location filename="../src/qml/Main.qml" line="153"/>
-        <source>Обновить</source>
-        <translation>Refresh</translation>
+        <location filename="../src/qml/Main.qml" line="23"/>
+        <source>zapret2control</source>
+        <translation type="unfinished">zapret2control</translation>
     </message>
     <message>
-        <location filename="../src/qml/Main.qml" line="165"/>
-        <source>Состояние zapret2</source>
-        <translation>zapret2 state</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/Main.qml" line="198"/>
-        <source>Управление системной службой zapret2</source>
-        <translation>Manage the zapret2 system service</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/Main.qml" line="204"/>
-        <source>Запускать zapret2 при загрузке системы</source>
-        <translation>Start zapret2 at system boot</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/Main.qml" line="215"/>
-        <source>Запустить</source>
-        <translation>Start</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/Main.qml" line="222"/>
-        <source>Остановить</source>
-        <translation>Stop</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/Main.qml" line="35"/>
+        <location filename="../src/qml/Main.qml" line="34"/>
         <source>Нельзя завершить приложение</source>
         <translation>Cannot close the application</translation>
     </message>
     <message>
-        <location filename="../src/qml/Main.qml" line="41"/>
+        <location filename="../src/qml/Main.qml" line="40"/>
         <source>Дождитесь завершения текущей операции или восстановления zapret2. Принудительное завершение может повредить установленную систему.</source>
         <translation>Wait for the current operation or zapret2 recovery to finish. Forcing the application to quit may damage the installed system.</translation>
     </message>
     <message>
-        <location filename="../src/qml/Main.qml" line="150"/>
+        <location filename="../src/qml/Main.qml" line="90"/>
+        <location filename="../src/qml/Main.qml" line="136"/>
         <source>Обзор</source>
         <translation>Overview</translation>
     </message>
     <message>
-        <location filename="../src/qml/Main.qml" line="229"/>
-        <source>Обновить состояние</source>
-        <translation>Refresh status</translation>
+        <location filename="../src/qml/Main.qml" line="105"/>
+        <location filename="../src/qml/Main.qml" line="191"/>
+        <source>Диагностика</source>
+        <translation type="unfinished">Diagnostics</translation>
     </message>
     <message>
-        <location filename="../src/qml/Main.qml" line="247"/>
-        <source>Версия zapret2</source>
-        <translation>zapret2 version</translation>
+        <location filename="../src/qml/Main.qml" line="110"/>
+        <location filename="../src/qml/Main.qml" line="209"/>
+        <source>Журнал</source>
+        <translation type="unfinished">Journal</translation>
     </message>
     <message>
-        <location filename="../src/qml/Main.qml" line="254"/>
-        <source>Установленная версия</source>
-        <translation>Installed version</translation>
+        <location filename="../src/qml/Main.qml" line="115"/>
+        <location filename="../src/qml/Main.qml" line="227"/>
+        <source>Управление zapret2</source>
+        <translation type="unfinished">Manage zapret2</translation>
     </message>
     <message>
-        <location filename="../src/qml/Main.qml" line="269"/>
-        <source>Проверить наличие новых версий можно в разделе «Обновления».</source>
-        <translation>You can check for new versions in the Updates section.</translation>
+        <location filename="../src/qml/Main.qml" line="120"/>
+        <location filename="../src/qml/Main.qml" line="245"/>
+        <source>Настройки приложения</source>
+        <translation type="unfinished">Application settings</translation>
     </message>
     <message>
-        <location filename="../src/qml/Main.qml" line="270"/>
-        <source>zapret2 пока не установлен. Перейдите в раздел «Обновления», чтобы выполнить установку.</source>
-        <translation>zapret2 is not installed yet. Open the Updates section to install it.</translation>
+        <location filename="../src/qml/Main.qml" line="145"/>
+        <source>Новая оболочка приложения. Раздел будет подключён после визуальной проверки навигации.</source>
+        <translation type="unfinished">This is the new application shell. The section will be implemented after the navigation has been visually reviewed.</translation>
     </message>
     <message>
-        <location filename="../src/qml/Main.qml" line="276"/>
-        <source>Открыть обновления</source>
-        <translation>Open updates</translation>
+        <location filename="../src/qml/Main.qml" line="163"/>
+        <source>Здесь будут представлены штатные параметры zapret2, профили, фильтры, расширенные настройки и исходный config.</source>
+        <translation type="unfinished">Native zapret2 settings, profiles, filters, advanced options, and the original config will be available here.</translation>
     </message>
     <message>
-        <location filename="../src/qml/Main.qml" line="139"/>
-        <source>Выход</source>
-        <translation>Quit</translation>
+        <location filename="../src/qml/Main.qml" line="181"/>
+        <source>Раздел предназначен для пользовательских и генерируемых списков, источников, обновления и системного планировщика.</source>
+        <translation type="unfinished">Manage user and generated lists, sources, updates, and the system scheduler here.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/Main.qml" line="199"/>
+        <source>Диагностика будет запускать штатный blockcheck2.sh с соответствующими upstream-компонентами и настройками.</source>
+        <translation type="unfinished">Diagnostics will run the upstream blockcheck2.sh script with matching upstream components and settings.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/Main.qml" line="217"/>
+        <source>Здесь будут раздельно отображаться операции приложения и журналы системных компонентов zapret2.</source>
+        <translation type="unfinished">Application operations and logs from zapret2 system components will be displayed separately here.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/Main.qml" line="235"/>
+        <source>Установка, переустановка, обновление и удаление будут выполняться через штатные сценарии upstream-проекта.</source>
+        <translation type="unfinished">Installation, reinstallation, updates, and removal will use the upstream project’s official scripts.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/Main.qml" line="253"/>
+        <source>Здесь будут находиться только настройки самого приложения: системный трей, запуск, уведомления и внешний вид.</source>
+        <translation type="unfinished">Only application preferences will be available here: system tray, startup, notifications, and appearance.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/Main.qml" line="272"/>
+        <source>zapret2control — графический интерфейс для управления штатными возможностями upstream zapret2 в KDE Plasma.</source>
+        <translation type="unfinished">zapret2control is a graphical interface for managing native upstream zapret2 capabilities in KDE Plasma.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/Main.qml" line="278"/>
+        <source>Версия приложения: %1</source>
+        <translation type="unfinished">Application version: %1</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../tests/test_i18n.cpp" line="77"/>
+        <location filename="../tests/test_i18n.cpp" line="87"/>
         <source>Выход</source>
         <translation>Quit</translation>
     </message>
@@ -1483,7 +1468,7 @@
     </message>
     <message>
         <location filename="../src/qml/pages/ProfilesPage.qml" line="64"/>
-        <location filename="../tests/test_i18n.cpp" line="84"/>
+        <location filename="../tests/test_i18n.cpp" line="94"/>
         <source>Новый профиль</source>
         <translation>New profile</translation>
     </message>
@@ -1537,7 +1522,7 @@
     </message>
     <message>
         <location filename="../src/qml/pages/SettingsPage.qml" line="20"/>
-        <location filename="../tests/test_i18n.cpp" line="82"/>
+        <location filename="../tests/test_i18n.cpp" line="92"/>
         <source>Внешний вид</source>
         <translation>Appearance</translation>
     </message>
@@ -1645,12 +1630,12 @@
         <translation>systemctl error: %1</translation>
     </message>
     <message>
-        <location filename="../src/backend/systemdbackend.cpp" line="208"/>
+        <location filename="../src/backend/systemdbackend.cpp" line="213"/>
         <source>Операция не выполнена (код %1): %2</source>
         <translation>Operation failed (code %1): %2</translation>
     </message>
     <message>
-        <location filename="../src/backend/systemdbackend.cpp" line="217"/>
+        <location filename="../src/backend/systemdbackend.cpp" line="222"/>
         <source>Не удалось запустить операцию systemd: %1</source>
         <translation>Failed to start the systemd operation: %1</translation>
     </message>
@@ -1660,7 +1645,7 @@
         <translation>Timed out waiting for systemctl.</translation>
     </message>
     <message>
-        <location filename="../src/backend/systemdbackend.cpp" line="197"/>
+        <location filename="../src/backend/systemdbackend.cpp" line="202"/>
         <source>Операция systemd выполняется дольше ожидаемого: %1. Ожидается фактическое завершение команды.</source>
         <translation>Systemd operation is taking longer than expected: %1. Waiting for the command to actually finish.</translation>
     </message>
@@ -1871,7 +1856,7 @@
 <context>
     <name>main</name>
     <message>
-        <location filename="../tests/test_i18n.cpp" line="78"/>
+        <location filename="../tests/test_i18n.cpp" line="88"/>
         <source>Запустить скрытым в системном трее</source>
         <translation>Start hidden in the system tray</translation>
     </message>

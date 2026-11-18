@@ -200,6 +200,7 @@ public:
     virtual PlatformOperation *readRecentLogs(LogLineCount lineCount) = 0;
 };
 
+// Implementations also derive QObject so SystemdBackend can own their async handles.
 class ServiceControlOperations
 {
 public:

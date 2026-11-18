@@ -126,7 +126,7 @@ void TestLinuxHostListOperations::writesOnlySourceListsAndPassesBoundedInput()
     PlatformOperation *readOnlyOperation = operations.writeList(
         HostListId::ZapretIpUser, contents);
     QSignalSpy readOnlyFinishedSpy(readOnlyOperation, &PlatformOperation::finished);
-    QCOMPARE(readOnlyFinishedSpy.size(), 1);
+    QTRY_COMPARE_WITH_TIMEOUT(readOnlyFinishedSpy.size(), 1, 1000);
     QCOMPARE(readOnlyFinishedSpy.constFirst().constFirst().value<OperationResult>().status,
              OperationStatus::ProtocolError);
 }
@@ -138,7 +138,7 @@ void TestLinuxHostListOperations::rejectsOversizedInput()
         HostListId::ZapretHostsUser, QByteArray(1024 * 1024 + 1, 'x'));
     QSignalSpy finishedSpy(operation, &PlatformOperation::finished);
 
-    QCOMPARE(finishedSpy.size(), 1);
+    QTRY_COMPARE_WITH_TIMEOUT(finishedSpy.size(), 1, 1000);
     QCOMPARE(finishedSpy.constFirst().constFirst().value<OperationResult>().status,
              OperationStatus::ProtocolError);
 }

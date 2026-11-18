@@ -1,16 +1,18 @@
 #include "configcontroller.h"
 
 #include <QCryptographicHash>
-#include <QProcess>
-#include <QTemporaryFile>
 #include <QFileInfo>
+#include <QProcess>
 #include <QSaveFile>
+#include <QTemporaryFile>
 
-#include "backend/helperpath.h"
+using namespace Zapret::Platform;
 
-ConfigController::ConfigController(QObject *parent)
+ConfigController::ConfigController(ConfigurationOperations *operations, QObject *parent)
     : QObject(parent)
+    , m_operations(operations)
 {
+    Q_ASSERT(m_operations);
 }
 
 QString ConfigController::configText() const { return m_configText; }
@@ -43,62 +45,88 @@ void ConfigController::setBusy(bool busy)
     emit busyChanged();
 }
 
-void ConfigController::finishProcess(QProcess *process, const QString &operation,
-                                     const QByteArray &input)
+void ConfigController::startOperation(PlatformOperation *operation, OperationKind kind,
+                                      const QByteArray &input)
 {
-    m_process = process;
-    connect(process, &QProcess::started, this, [process, input, operation] {
-        if (operation == QLatin1String("save")) {
-            process->write(input);
-            process->closeWriteChannel();
-        }
-    });
-    connect(process, &QProcess::finished, this,
-            [this, process, operation, input](int code, QProcess::ExitStatus exitStatus) {
-        if (m_process != process)
-            return;
-        const QByteArray out = process->readAllStandardOutput();
-        const QString error = QString::fromUtf8(process->readAllStandardError()).trimmed();
-        m_process = nullptr;
-        process->deleteLater();
+    if (!operation) {
         setBusy(false);
-        const bool ok = exitStatus == QProcess::NormalExit && code == 0;
-        if (!ok) {
-            setStatus(error.isEmpty()
-                ? tr("Операция не выполнена (код %1).").arg(code) : error);
+        setStatus(tr("Операция недоступна на этой платформе."));
+        return;
+    }
+
+    m_operation = operation;
+    m_operationOutput.clear();
+    m_operationError.clear();
+    m_pendingInput = input;
+
+    connect(operation, &PlatformOperation::standardOutputReceived, this,
+            [this, operation](const QByteArray &data) {
+        if (m_operation == operation)
+            m_operationOutput.append(data);
+    });
+    connect(operation, &PlatformOperation::standardErrorReceived, this,
+            [this, operation](const QByteArray &data) {
+        if (m_operation == operation)
+            m_operationError.append(data);
+    });
+    connect(operation, &PlatformOperation::finished, this,
+            [this, operation, kind](const OperationResult &result) {
+        handleOperationFinished(operation, kind, result);
+    });
+}
+
+void ConfigController::handleOperationFinished(PlatformOperation *operation,
+                                                OperationKind kind,
+                                                const OperationResult &result)
+{
+    if (m_operation != operation)
+        return;
+
+    const QByteArray output = m_operationOutput;
+    const QString error = QString::fromUtf8(m_operationError).trimmed();
+    const QByteArray input = m_pendingInput;
+    m_operation = nullptr;
+    m_operationOutput.clear();
+    m_operationError.clear();
+    m_pendingInput.clear();
+    setBusy(false);
+
+    if (!result.succeeded()) {
+        if (!error.isEmpty()) {
+            setStatus(error);
+        } else if (result.status == OperationStatus::AuthorizationDenied) {
+            setStatus(tr("Операция отменена: авторизация не выполнена."));
+        } else if (result.status == OperationStatus::TimedOut) {
+            setStatus(tr("Операция не завершилась за отведённое время."));
+        } else if (result.status == OperationStatus::Unavailable) {
+            setStatus(tr("Привилегированный helper недоступен."));
+        } else {
+            setStatus(tr("Операция не выполнена (код %1).").arg(result.nativeCode));
+        }
+        return;
+    }
+
+    if (kind == OperationKind::Read) {
+        const QString decoded = QString::fromUtf8(output);
+        if (decoded.toUtf8() != output) {
+            setStatus(tr("Файл конфигурации содержит некорректную последовательность UTF-8; чтение отменено во избежание потери данных."));
             return;
         }
-        if (operation == QLatin1String("read")) {
-            const QString decoded = QString::fromUtf8(out);
-            if (decoded.toUtf8() != out) {
-                setStatus(tr("Файл конфигурации содержит некорректную последовательность UTF-8; чтение отменено во избежание потери данных."));
-                return;
-            }
-            m_originalBytes = out;
-            setConfigText(decoded);
-            if (!m_loaded) {
-                m_loaded = true;
-                emit loadedChanged();
-            }
-            setStatus(tr("Конфигурация загружена. Перед сохранением будет проверен синтаксис и создана резервная копия."));
-        } else if (operation == QLatin1String("save")) {
-            m_originalBytes = input;
-            setStatus(QString::fromUtf8(out).trimmed());
-        } else if (operation == QLatin1String("rollback")) {
-            setStatus(QString::fromUtf8(out).trimmed());
-            read();
+
+        m_originalBytes = output;
+        setConfigText(decoded);
+        if (!m_loaded) {
+            m_loaded = true;
+            emit loadedChanged();
         }
-    });
-    connect(process, &QProcess::errorOccurred, this,
-            [this, process](QProcess::ProcessError error) {
-        if (error != QProcess::FailedToStart || m_process != process)
-            return;
-        const QString reason = process->errorString();
-        m_process = nullptr;
-        process->deleteLater();
-        setBusy(false);
-        setStatus(tr("Не удалось запустить привилегированный helper: %1").arg(reason));
-    });
+        setStatus(tr("Конфигурация загружена. Перед сохранением будет проверен синтаксис и создана резервная копия."));
+    } else if (kind == OperationKind::Save) {
+        m_originalBytes = input;
+        setStatus(QString::fromUtf8(output).trimmed());
+    } else {
+        setStatus(QString::fromUtf8(output).trimmed());
+        read();
+    }
 }
 
 void ConfigController::read()
@@ -107,25 +135,26 @@ void ConfigController::read()
         return;
     setBusy(true);
     setStatus(tr("Чтение /opt/zapret2/config…"));
-    auto *process = new QProcess(this);
-    finishProcess(process, QStringLiteral("read"));
-    Helper::start(process, {QStringLiteral("config-read")});
+    startOperation(m_operations->readConfiguration(), OperationKind::Read);
 }
 
 void ConfigController::validate()
 {
     if (!m_loaded || m_busy)
         return;
+
     const QByteArray bytes = m_configText.toUtf8();
     if (bytes.size() > 1024 * 1024) {
         setStatus(tr("Конфигурация превышает ограничение 1 MiB."));
         return;
     }
+
     QTemporaryFile staged;
     if (!staged.open() || staged.write(bytes) != bytes.size() || !staged.flush()) {
         setStatus(tr("Не удалось подготовить файл для проверки: %1").arg(staged.errorString()));
         return;
     }
+
     QProcess validator;
     validator.start(QStringLiteral("/bin/sh"), {QStringLiteral("-n"), staged.fileName()});
     if (!validator.waitForStarted(3000) || !validator.waitForFinished(10000)) {
@@ -143,16 +172,19 @@ void ConfigController::save()
 {
     if (!m_loaded || m_busy)
         return;
+
     const QByteArray bytes = m_configText.toUtf8();
     if (bytes.size() > 1024 * 1024) {
         setStatus(tr("Конфигурация превышает ограничение 1 MiB."));
         return;
     }
+
     QTemporaryFile staged;
     if (!staged.open() || staged.write(bytes) != bytes.size() || !staged.flush()) {
         setStatus(tr("Не удалось подготовить файл для проверки: %1").arg(staged.errorString()));
         return;
     }
+
     QProcess validator;
     validator.start(QStringLiteral("/bin/sh"), {QStringLiteral("-n"), staged.fileName()});
     if (!validator.waitForStarted(3000) || !validator.waitForFinished(10000)
@@ -160,15 +192,20 @@ void ConfigController::save()
         setStatus(tr("Сохранение отменено: shell-синтаксис не прошёл проверку."));
         return;
     }
-    const QString expectedHash = QString::fromLatin1(
-        QCryptographicHash::hash(m_originalBytes, QCryptographicHash::Sha256).toHex());
+
+    const QByteArray digestHex =
+        QCryptographicHash::hash(m_originalBytes, QCryptographicHash::Sha256).toHex();
+    const auto digest = Sha256Digest::fromHex(digestHex);
+    if (!digest) {
+        setStatus(tr("Не удалось вычислить контрольную сумму исходной конфигурации."));
+        return;
+    }
+
     setBusy(true);
     setStatus(tr("Helper повторно проверит синтаксис и контрольную сумму, создаст резервную копию и атомарно сохранит файл…"));
-    auto *process = new QProcess(this);
-    finishProcess(process, QStringLiteral("save"), bytes);
-    Helper::start(process, {QStringLiteral("config-write"), expectedHash});
+    startOperation(m_operations->writeConfiguration(bytes, *digest),
+                   OperationKind::Save, bytes);
 }
-
 
 bool ConfigController::exportConfig(const QUrl &url)
 {
@@ -203,7 +240,5 @@ void ConfigController::rollback()
         return;
     setBusy(true);
     setStatus(tr("Восстановление последней резервной копии…"));
-    auto *process = new QProcess(this);
-    finishProcess(process, QStringLiteral("rollback"));
-    Helper::start(process, {QStringLiteral("config-rollback")});
+    startOperation(m_operations->rollbackConfiguration(), OperationKind::Rollback);
 }

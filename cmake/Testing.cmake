@@ -25,6 +25,15 @@ if(BUILD_TESTING)
     add_test(NAME linux_configuration_operations
              COMMAND test_linuxconfigurationoperations)
 
+    qt_add_executable(test_configcontroller
+        tests/test_configcontroller.cpp
+        src/qml/configcontroller.cpp src/qml/configcontroller.h
+        src/platform/privilegedoperation.cpp src/platform/privilegedoperation.h
+        src/platform/privilegedoperations.h)
+    target_include_directories(test_configcontroller PRIVATE src src/qml)
+    target_link_libraries(test_configcontroller PRIVATE Qt6::Test Qt6::Core)
+    add_test(NAME config_controller COMMAND test_configcontroller)
+
     find_program(DBUS_RUN_SESSION_EXECUTABLE dbus-run-session REQUIRED)
     qt_add_executable(test_blockcheck tests/test_blockcheck.cpp
         src/backend/blockcheckrunner.cpp src/backend/blockcheckrunner.h)

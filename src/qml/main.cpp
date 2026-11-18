@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <memory>
 
 #include <QCommandLineOption>
 #include <QCommandLineParser>
@@ -66,7 +67,9 @@ int main(int argc, char *argv[])
     applyColorScheme();
     QObject::connect(&settingsManager, &SettingsManager::themeChanged, &app, applyColorScheme);
 
-    ConfigController configController;
+    std::unique_ptr<Zapret::Platform::ConfigurationOperations> configurationOperations(
+        Zapret::Platform::createConfigurationOperations());
+    ConfigController configController(configurationOperations.get());
     ProfileController profileController;
     LogsController logsController;
     ListsController listsController;

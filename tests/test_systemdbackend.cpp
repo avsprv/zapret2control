@@ -10,12 +10,12 @@
 
 using namespace Zapret::Platform;
 
-class FakeServiceControlOperations final : public ServiceControlOperations
+class FakeServiceControlOperations final : public QObject, public ServiceControlOperations
 {
     Q_OBJECT
 
 public:
-    using ServiceControlOperations::ServiceControlOperations;
+    using QObject::QObject;
 
     QStringList actions;
     int activePrivilegedProcesses = 0;

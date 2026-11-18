@@ -108,7 +108,7 @@ public:
     static std::optional<ValidatedUpstreamVersion> fromTag(const QString &tag)
     {
         static const QRegularExpression pattern(
-            QStringLiteral(R"(^v[0-9]+(?:\\.[0-9]+)*$)"));
+            QStringLiteral(R"(^v[0-9]+(?:\.[0-9]+)*$)"));
         if (tag.size() > 24 || !pattern.match(tag).hasMatch())
             return std::nullopt;
 

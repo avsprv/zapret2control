@@ -4,7 +4,6 @@
 #include <QRegularExpression>
 #include <QStringList>
 #include <QUuid>
-#include <QObject>
 
 #include <optional>
 #include <utility>
@@ -201,11 +200,10 @@ public:
     virtual PlatformOperation *readRecentLogs(LogLineCount lineCount) = 0;
 };
 
-class ServiceControlOperations : public QObject
+class ServiceControlOperations
 {
 public:
-    using QObject::QObject;
-    ~ServiceControlOperations() override = default;
+    virtual ~ServiceControlOperations() = default;
 
     virtual PlatformOperation *queryEngineState() = 0;
     virtual PlatformOperation *queryBootEnabled() = 0;

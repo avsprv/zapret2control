@@ -13,6 +13,7 @@ target_sources(zapret2control PRIVATE
     src/platform/linuxautostartintegration.cpp
     src/platform/linuxautostartintegration.h
     src/platform/platformintegration.h
+    src/platform/autostartintegration.h
     src/platform/trayintegration.h
     src/qml/traycontroller.cpp
     src/qml/traycontroller.h

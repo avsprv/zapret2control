@@ -9,10 +9,17 @@ class TestPlatformOperation final : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
+    void initTestCase();
     void streamsOutputBeforeCompletion();
     void ignoresOutputAfterCompletion();
     void completesExactlyOnce();
 };
+
+void TestPlatformOperation::initTestCase()
+{
+    qRegisterMetaType<OperationStatus>();
+    qRegisterMetaType<OperationResult>();
+}
 
 void TestPlatformOperation::streamsOutputBeforeCompletion()
 {

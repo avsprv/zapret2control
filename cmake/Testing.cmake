@@ -218,9 +218,10 @@ if(BUILD_TESTING)
 
     qt_add_executable(test_profilecontroller tests/test_profilecontroller.cpp
         src/qml/profilecontroller.cpp src/qml/profilecontroller.h
-        src/profileanalyzer.cpp src/profileanalyzer.h)
+        src/profileanalyzer.cpp src/profileanalyzer.h
+        src/platform/privilegedoperation.cpp src/platform/privilegedoperation.h
+        src/platform/privilegedoperations.h)
     target_include_directories(test_profilecontroller PRIVATE src src/qml)
     target_link_libraries(test_profilecontroller PRIVATE Qt6::Test Qt6::Core)
-    target_compile_definitions(test_profilecontroller PRIVATE QZAPRET_HELPER_PATH="/nonexistent")
     add_test(NAME profile_controller COMMAND test_profilecontroller)
 endif()

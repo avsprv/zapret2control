@@ -661,6 +661,31 @@
         <source>Копия конфигурации сохранена: %1</source>
         <translation>Configuration copy saved: %1</translation>
     </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Операция недоступна на этой платформе.</source>
+        <translation>Operation is unavailable on this platform.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Операция отменена: авторизация не выполнена.</source>
+        <translation>Operation canceled: authorization was not completed.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Операция не завершилась за отведённое время.</source>
+        <translation>The operation did not complete within the allowed time.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Привилегированный helper недоступен.</source>
+        <translation>The privileged helper is unavailable.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Не удалось вычислить контрольную сумму исходной конфигурации.</source>
+        <translation>Could not calculate the checksum of the original configuration.</translation>
+    </message>
 </context>
 <context>
     <name>ConfigPage</name>
@@ -1889,31 +1914,6 @@
         <location filename="../tests/test_i18n.cpp" line="78"/>
         <source>Запустить скрытым в системном трее</source>
         <translation>Start hidden in the system tray</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/configcontroller.cpp"/>
-        <source>Операция недоступна на этой платформе.</source>
-        <translation>Operation is unavailable on this platform.</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/configcontroller.cpp"/>
-        <source>Операция отменена: авторизация не выполнена.</source>
-        <translation>Operation canceled: authorization was not completed.</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/configcontroller.cpp"/>
-        <source>Операция не завершилась за отведённое время.</source>
-        <translation>The operation did not complete within the allowed time.</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/configcontroller.cpp"/>
-        <source>Привилегированный helper недоступен.</source>
-        <translation>The privileged helper is unavailable.</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/configcontroller.cpp"/>
-        <source>Не удалось вычислить контрольную сумму исходной конфигурации.</source>
-        <translation>Could not calculate the checksum of the original configuration.</translation>
     </message>
 </context>
 </TS>

@@ -122,7 +122,7 @@ void TestConfigController::savesValidatedConfiguration()
     QTRY_VERIFY_WITH_TIMEOUT(!controller.busy(), 1000);
 
     QCOMPARE(operations.contents, controller.configText().toUtf8());
-    QCOMPARE(controller.status(), QStringLiteral("saved"));
+    QCOMPARE(controller.status(), QStringLiteral("Конфигурация сохранена."));
 }
 
 void TestConfigController::rejectsInvalidShellSyntax()
@@ -166,13 +166,13 @@ void TestConfigController::doesNotExposeHelperDiagnostics()
     const QString untrustedText = QStringLiteral("UNTRUSTED_HELPER_OUTPUT");
     operations.failNextWrite = true;
     operations.failureDiagnostic = untrustedText.toUtf8();
-    controller.setConfigText(QStringLiteral("NFQWS2_ENABLE=0\\n"));
+    controller.setConfigText(QStringLiteral("NFQWS2_ENABLE=0\n"));
     controller.save();
     QTRY_VERIFY_WITH_TIMEOUT(!controller.busy(), 1000);
 
     QVERIFY(!controller.status().contains(untrustedText));
     QCOMPARE(controller.status(), QStringLiteral("Операция не выполнена."));
-    QCOMPARE(operations.contents, QByteArray("NFQWS2_ENABLE=1\\n"));
+    QCOMPARE(operations.contents, QByteArray("NFQWS2_ENABLE=1\n"));
 }
 
 void TestConfigController::rollsBackAndReloadsConfiguration()

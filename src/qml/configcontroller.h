@@ -3,7 +3,8 @@
 #include <QObject>
 #include <QUrl>
 #include <QString>
-#include <QProcess>
+
+#include "platform/privilegedoperations.h"
 
 class ConfigController final : public QObject
 {
@@ -14,7 +15,8 @@ class ConfigController final : public QObject
     Q_PROPERTY(bool loaded READ loaded NOTIFY loadedChanged)
 
 public:
-    explicit ConfigController(QObject *parent = nullptr);
+    explicit ConfigController(Zapret::Platform::ConfigurationOperations *operations,
+                              QObject *parent = nullptr);
     QString configText() const;
     void setConfigText(const QString &text);
     QString status() const;
@@ -34,14 +36,27 @@ signals:
     void loadedChanged();
 
 private:
+    enum class OperationKind {
+        Read,
+        Save,
+        Rollback
+    };
+
     void setStatus(const QString &status);
     void setBusy(bool busy);
-    void finishProcess(QProcess *process, const QString &operation,
-                       const QByteArray &input = {});
+    void startOperation(Zapret::Platform::PlatformOperation *operation,
+                        OperationKind kind, const QByteArray &input = {});
+    void handleOperationFinished(Zapret::Platform::PlatformOperation *operation,
+                                 OperationKind kind,
+                                 const Zapret::Platform::OperationResult &result);
+
+    Zapret::Platform::ConfigurationOperations *m_operations = nullptr;
+    Zapret::Platform::PlatformOperation *m_operation = nullptr;
     QString m_configText;
     QString m_status;
     bool m_busy = false;
     bool m_loaded = false;
     QByteArray m_originalBytes;
-    QProcess *m_process = nullptr;
+    QByteArray m_operationOutput;
+    QByteArray m_pendingInput;
 };

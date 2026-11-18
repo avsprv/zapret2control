@@ -1,9 +1,32 @@
 #include "logscontroller.h"
 
-#include "backend/helperpath.h"
+#include <optional>
 
-LogsController::LogsController(QObject *parent)
+using namespace Zapret::Platform;
+
+namespace {
+
+std::optional<LogLineCount> logLineCountForValue(int value)
+{
+    switch (value) {
+    case 50:
+        return LogLineCount::Fifty;
+    case 100:
+        return LogLineCount::OneHundred;
+    case 200:
+        return LogLineCount::TwoHundred;
+    case 500:
+        return LogLineCount::FiveHundred;
+    }
+
+    return std::nullopt;
+}
+
+} // namespace
+
+LogsController::LogsController(SystemLogOperations *operations, QObject *parent)
     : QObject(parent)
+    , m_operations(operations)
 {
 }
 
@@ -36,60 +59,83 @@ void LogsController::setLogText(const QString &text)
     emit logTextChanged();
 }
 
+QString LogsController::operationErrorText(OperationStatus status, int nativeCode) const
+{
+    switch (status) {
+    case OperationStatus::AuthorizationDenied:
+        return tr("Авторизация отменена.");
+    case OperationStatus::TimedOut:
+        return tr("Операция превысила время ожидания.");
+    case OperationStatus::Unavailable:
+        return tr("Не удалось запустить helper.");
+    case OperationStatus::ProtocolError:
+        return tr("Получен некорректный ответ от helper.");
+    case OperationStatus::Failed:
+        return tr("Не удалось прочитать журнал (код %1).").arg(nativeCode);
+    case OperationStatus::Succeeded:
+        break;
+    }
+
+    return tr("Не удалось прочитать журнал (код %1).").arg(nativeCode);
+}
+
 void LogsController::readLogs(int lineCount)
 {
     if (m_busy)
         return;
-    if (lineCount != 50 && lineCount != 100 && lineCount != 200 && lineCount != 500) {
+
+    const auto typedLineCount = logLineCountForValue(lineCount);
+    if (!typedLineCount.has_value()) {
         setStatus(tr("Недопустимое количество строк журнала."));
+        return;
+    }
+    if (!m_operations) {
+        setStatus(tr("Операции с журналом недоступны."));
         return;
     }
 
     m_lineCount = lineCount;
     emit lineCountChanged();
     m_output.clear();
-    m_error.clear();
+    m_outputExceeded = false;
     setBusy(true);
     setStatus(tr("Чтение журнала zapret2.service…"));
 
-    auto *process = new QProcess(this);
-    m_process = process;
+    PlatformOperation *operation = m_operations->readRecentLogs(*typedLineCount);
+    if (!operation) {
+        setBusy(false);
+        setStatus(tr("Не удалось прочитать журнал (код %1).").arg(-1));
+        return;
+    }
 
-    connect(process, &QProcess::readyReadStandardOutput, this, [this, process] {
-        if (m_process != process)
+    m_operation = operation;
+    connect(operation, &PlatformOperation::standardOutputReceived, this,
+            [this, operation](const QByteArray &data) {
+        if (m_operation != operation || m_outputExceeded || data.isEmpty())
             return;
-        m_output.append(process->readAllStandardOutput());
-        if (m_output.size() > 1024 * 1024) {
-            setStatus(tr("Полученный журнал превысил допустимый размер; чтение остановлено."));
-            process->kill();
+        if (m_output.size() + data.size() > 1024 * 1024) {
+            m_outputExceeded = true;
+            m_output.clear();
+            return;
         }
+        m_output.append(data);
     });
-    connect(process, &QProcess::readyReadStandardError, this, [this, process] {
-        if (m_process != process)
+
+    connect(operation, &PlatformOperation::finished, this,
+            [this, operation](const OperationResult &result) {
+        if (m_operation != operation)
             return;
-        m_error.append(process->readAllStandardError());
-        if (m_error.size() > 64 * 1024)
-            m_error = m_error.right(64 * 1024);
-    });
-    connect(process, &QProcess::finished, this,
-            [this, process](int exitCode, QProcess::ExitStatus exitStatus) {
-        if (m_process != process)
-            return;
-        m_output.append(process->readAllStandardOutput());
-        m_error.append(process->readAllStandardError());
-        const QString error = QString::fromUtf8(m_error).trimmed();
-        m_process = nullptr;
-        process->deleteLater();
+
+        m_operation = nullptr;
         setBusy(false);
 
-        if (m_output.size() > 1024 * 1024) {
+        if (m_outputExceeded
+            || result.diagnosticCode == QLatin1String("helper.stdout_limit_exceeded")) {
             setStatus(tr("Журнал превышает ограничение 1 MiB; данные не отображены."));
             return;
         }
-        if (exitStatus != QProcess::NormalExit || exitCode != 0) {
-            setStatus(error.isEmpty()
-                ? tr("Не удалось прочитать журнал (код %1).").arg(exitCode)
-                : tr("Не удалось прочитать журнал: %1").arg(error));
+        if (!result.succeeded()) {
+            setStatus(operationErrorText(result.status, result.nativeCode));
             return;
         }
 
@@ -98,19 +144,8 @@ void LogsController::readLogs(int lineCount)
             setStatus(tr("Журнал содержит некорректный UTF-8; данные не отображены."));
             return;
         }
+
         setLogText(decoded);
         setStatus(tr("Журнал обновлён: получено %1 байт.").arg(m_output.size()));
     });
-    connect(process, &QProcess::errorOccurred, this,
-            [this, process](QProcess::ProcessError error) {
-        if (error != QProcess::FailedToStart || m_process != process)
-            return;
-        const QString reason = process->errorString();
-        m_process = nullptr;
-        process->deleteLater();
-        setBusy(false);
-        setStatus(tr("Не удалось запустить helper: %1").arg(reason));
-    });
-
-    Helper::start(process, {QStringLiteral("logs-read"), QString::number(lineCount)});
 }

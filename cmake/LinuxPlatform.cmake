@@ -10,6 +10,14 @@ set(QZAPRET_HELPER "${CMAKE_INSTALL_FULL_LIBEXECDIR}/zapret2control/zapret2contr
 
 target_sources(zapret2control PRIVATE
     src/platform/platformintegration_linux.cpp
+    src/platform/linuxconfigurationoperations.cpp
+    src/platform/linuxconfigurationoperations.h
+    src/platform/linuxhostlistoperations.cpp
+    src/platform/linuxhostlistoperations.h
+    src/platform/linuxsystemlogoperations.cpp
+    src/platform/linuxsystemlogoperations.h
+    src/platform/linuxservicecontroloperations.cpp
+    src/platform/linuxservicecontroloperations.h
     src/platform/linuxautostartintegration.cpp
     src/platform/linuxautostartintegration.h
     src/platform/platformintegration.h

@@ -25,26 +25,25 @@ jobs:
           cmake --build build --target zapret2control_i18n_lupdate
           python3 - <<'PY'
           import xml.etree.ElementTree as ET
-          from pathlib import Path
 
           def canonical_catalog(path):
               root = ET.parse(path).getroot()
 
-              for location in root.iter("location"):
-                  location.attrib.pop("line", None)
+              # Ignore indentation-only text nodes; lupdate may reformat XML whitespace.
+              for element in root.iter():
+                  if element.text is not None and not element.text.strip():
+                      element.text = None
+                  if element.tail is not None and not element.tail.strip():
+                      element.tail = None
 
-              # Qt Linguist may reorder equivalent context, message, and location
-              # elements. Compare catalog meaning rather than incidental XML order.
+              # Source locations are editor metadata. Compare translation content,
+              # not paths or line numbers that may vary across build environments.
+              for message in root.iter("message"):
+                  for location in message.findall("location"):
+                      message.remove(location)
+
+              # Qt Linguist may reorder equivalent context and message elements.
               for context in root.findall("context"):
-                  for message in context.findall("message"):
-                      locations = message.findall("location")
-                      for location in locations:
-                          message.remove(location)
-                      for location in sorted(
-                          locations, key=lambda item: tuple(sorted(item.attrib.items()))
-                      ):
-                          message.append(location)
-
                   messages = context.findall("message")
                   for message in messages:
                       context.remove(message)
@@ -69,6 +68,14 @@ jobs:
           before = canonical_catalog("/tmp/zapret2control_en.ts.before")
           after = canonical_catalog("i18n/zapret2control_en.ts")
           if before != after:
+              import difflib
+              print("\n".join(difflib.unified_diff(
+                  before.decode("utf-8").splitlines(),
+                  after.decode("utf-8").splitlines(),
+                  fromfile="committed catalog",
+                  tofile="lupdate catalog",
+                  lineterm="",
+              )))
               raise SystemExit("Translation catalog differs from current sources")
           PY
       - name: Build

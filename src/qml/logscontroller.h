@@ -2,8 +2,10 @@
 
 #include <QByteArray>
 #include <QObject>
+#include <QPointer>
 #include <QString>
-#include <QProcess>
+
+#include "platform/privilegedoperations.h"
 
 class LogsController final : public QObject
 {
@@ -14,7 +16,8 @@ class LogsController final : public QObject
     Q_PROPERTY(int lineCount READ lineCount NOTIFY lineCountChanged)
 
 public:
-    explicit LogsController(QObject *parent = nullptr);
+    explicit LogsController(Zapret::Platform::SystemLogOperations *operations,
+                            QObject *parent = nullptr);
 
     QString logText() const;
     QString status() const;
@@ -33,12 +36,15 @@ private:
     void setStatus(const QString &status);
     void setBusy(bool busy);
     void setLogText(const QString &text);
+    QString operationErrorText(Zapret::Platform::OperationStatus status,
+                                int nativeCode) const;
 
+    Zapret::Platform::SystemLogOperations *m_operations = nullptr;
+    QPointer<Zapret::Platform::PlatformOperation> m_operation;
     QString m_logText;
     QString m_status;
     int m_lineCount = 200;
     bool m_busy = false;
     QByteArray m_output;
-    QByteArray m_error;
-    QProcess *m_process = nullptr;
+    bool m_outputExceeded = false;
 };

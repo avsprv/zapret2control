@@ -580,11 +580,6 @@
 <context>
     <name>ConfigController</name>
     <message>
-        <location filename="../src/qml/configcontroller.cpp" line="68"/>
-        <source>Операция не выполнена (код %1).</source>
-        <translation>Operation failed (exit code %1).</translation>
-    </message>
-    <message>
         <location filename="../src/qml/configcontroller.cpp" line="74"/>
         <source>Файл конфигурации содержит некорректную последовательность UTF-8; чтение отменено во избежание потери данных.</source>
         <translation>The configuration file contains an invalid UTF-8 sequence; reading was canceled to prevent data loss.</translation>
@@ -593,11 +588,6 @@
         <location filename="../src/qml/configcontroller.cpp" line="83"/>
         <source>Конфигурация загружена. Перед сохранением будет проверен синтаксис и создана резервная копия.</source>
         <translation>Configuration loaded. Syntax will be checked and a backup will be created before saving.</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/configcontroller.cpp" line="100"/>
-        <source>Не удалось запустить привилегированный helper: %1</source>
-        <translation>Could not start the privileged helper: %1</translation>
     </message>
     <message>
         <location filename="../src/qml/configcontroller.cpp" line="109"/>
@@ -665,6 +655,46 @@
         <location filename="../src/qml/configcontroller.cpp" line="196"/>
         <source>Копия конфигурации сохранена: %1</source>
         <translation>Configuration copy saved: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Операция недоступна на этой платформе.</source>
+        <translation>Operation is unavailable on this platform.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Операция отменена: авторизация не выполнена.</source>
+        <translation>Operation canceled: authorization was not completed.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Операция не завершилась за отведённое время.</source>
+        <translation>The operation did not complete within the allowed time.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Привилегированный helper недоступен.</source>
+        <translation>The privileged helper is unavailable.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Не удалось вычислить контрольную сумму исходной конфигурации.</source>
+        <translation>Could not calculate the checksum of the original configuration.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Операция не выполнена.</source>
+        <translation>Operation failed.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Конфигурация сохранена.</source>
+        <translation>Configuration saved.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Резервная копия восстановлена.</source>
+        <translation>Backup restored.</translation>
     </message>
 </context>
 <context>
@@ -842,11 +872,7 @@
         <source>Чтение списка %1…</source>
         <translation>Reading list %1…</translation>
     </message>
-    <message>
-        <location filename="../src/qml/listscontroller.cpp" line="164"/>
-        <source>Список превышает ограничение 1 MiB; чтение остановлено.</source>
-        <translation>List exceeds the 1 MiB limit; reading stopped.</translation>
-    </message>
+
     <message>
         <location filename="../src/qml/listscontroller.cpp" line="183"/>
         <source>Список превышает ограничение 1 MiB; данные не отображены.</source>
@@ -857,16 +883,7 @@
         <source>Файл %1 ещё не создан. Можно добавить записи и сохранить его.</source>
         <translation>File %1 does not exist yet. You can add entries and save it.</translation>
     </message>
-    <message>
-        <location filename="../src/qml/listscontroller.cpp" line="197"/>
-        <source>Не удалось прочитать список (код %1).</source>
-        <translation>Could not read list (exit code %1).</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/listscontroller.cpp" line="198"/>
-        <source>Не удалось прочитать список: %1</source>
-        <translation>Could not read list: %1</translation>
-    </message>
+
     <message>
         <location filename="../src/qml/listscontroller.cpp" line="203"/>
         <source>Список содержит некорректный UTF-8; данные не отображены.</source>
@@ -877,31 +894,44 @@
         <source>Список %1 прочитан.</source>
         <translation>List %1 read.</translation>
     </message>
-    <message>
-        <location filename="../src/qml/listscontroller.cpp" line="219"/>
-        <location filename="../src/qml/listscontroller.cpp" line="291"/>
-        <source>Не удалось запустить helper: %1</source>
-        <translation>Could not start helper: %1</translation>
-    </message>
+
     <message>
         <location filename="../src/qml/listscontroller.cpp" line="242"/>
         <source>Проверка и сохранение списка %1…</source>
         <translation>Validating and saving list %1…</translation>
     </message>
+
     <message>
-        <location filename="../src/qml/listscontroller.cpp" line="279"/>
-        <source>Список сохранён; резервная копия создана.</source>
-        <translation>List saved; backup created.</translation>
+        <source>Список сохранён.</source>
+        <translation>List saved.</translation>
     </message>
     <message>
-        <location filename="../src/qml/listscontroller.cpp" line="281"/>
-        <source>Не удалось сохранить список (код %1).</source>
-        <translation>Could not save list (exit code %1).</translation>
+        <source>Авторизация отменена.</source>
+        <translation>Authorization was cancelled.</translation>
     </message>
     <message>
-        <location filename="../src/qml/listscontroller.cpp" line="282"/>
-        <source>Не удалось сохранить список: %1</source>
-        <translation>Could not save list: %1</translation>
+        <source>Операция превысила время ожидания.</source>
+        <translation>The operation timed out.</translation>
+    </message>
+    <message>
+        <source>Не удалось запустить helper.</source>
+        <translation>Could not start the helper.</translation>
+    </message>
+    <message>
+        <source>Получен некорректный ответ от helper.</source>
+        <translation>The helper returned an invalid response.</translation>
+    </message>
+    <message>
+        <source>Не удалось прочитать список.</source>
+        <translation>Could not read the list.</translation>
+    </message>
+    <message>
+        <source>Не удалось сохранить список.</source>
+        <translation>Could not save the list.</translation>
+    </message>
+    <message>
+        <source>Операции со списками недоступны.</source>
+        <translation>List operations are unavailable.</translation>
     </message>
 </context>
 <context>
@@ -1064,11 +1094,7 @@
         <source>Чтение журнала zapret2.service…</source>
         <translation>Reading zapret2.service journal…</translation>
     </message>
-    <message>
-        <location filename="../src/qml/logscontroller.cpp" line="63"/>
-        <source>Полученный журнал превысил допустимый размер; чтение остановлено.</source>
-        <translation>Retrieved journal exceeded the size limit; reading was stopped.</translation>
-    </message>
+
     <message>
         <location filename="../src/qml/logscontroller.cpp" line="86"/>
         <source>Журнал превышает ограничение 1 MiB; данные не отображены.</source>
@@ -1079,11 +1105,7 @@
         <source>Не удалось прочитать журнал (код %1).</source>
         <translation>Could not read the journal (exit code %1).</translation>
     </message>
-    <message>
-        <location filename="../src/qml/logscontroller.cpp" line="92"/>
-        <source>Не удалось прочитать журнал: %1</source>
-        <translation>Could not read the journal: %1</translation>
-    </message>
+
     <message>
         <location filename="../src/qml/logscontroller.cpp" line="98"/>
         <source>Журнал содержит некорректный UTF-8; данные не отображены.</source>
@@ -1095,9 +1117,24 @@
         <translation>Journal refreshed: received %1 bytes.</translation>
     </message>
     <message>
-        <location filename="../src/qml/logscontroller.cpp" line="112"/>
-        <source>Не удалось запустить helper: %1</source>
-        <translation>Could not start the helper: %1</translation>
+        <source>Авторизация отменена.</source>
+        <translation>Authorization was cancelled.</translation>
+    </message>
+    <message>
+        <source>Операция превысила время ожидания.</source>
+        <translation>The operation timed out.</translation>
+    </message>
+    <message>
+        <source>Не удалось запустить helper.</source>
+        <translation>Could not start the helper.</translation>
+    </message>
+    <message>
+        <source>Получен некорректный ответ от helper.</source>
+        <translation>The helper returned an invalid response.</translation>
+    </message>
+    <message>
+        <source>Операции с журналом недоступны.</source>
+        <translation>Log operations are unavailable.</translation>
     </message>
 </context>
 <context>
@@ -1654,16 +1691,7 @@
         <source>Ошибка systemctl: %1</source>
         <translation>systemctl error: %1</translation>
     </message>
-    <message>
-        <location filename="../src/backend/systemdbackend.cpp" line="208"/>
-        <source>Операция не выполнена (код %1): %2</source>
-        <translation>Operation failed (code %1): %2</translation>
-    </message>
-    <message>
-        <location filename="../src/backend/systemdbackend.cpp" line="217"/>
-        <source>Не удалось запустить операцию systemd: %1</source>
-        <translation>Failed to start the systemd operation: %1</translation>
-    </message>
+
     <message>
         <location filename="../src/backend/systemdbackend.cpp" line="40"/>
         <source>Превышено время ожидания ответа systemctl.</source>
@@ -1683,6 +1711,26 @@
         <location filename="../src/backend/systemdbackend.cpp" line="265"/>
         <source>Авторизация для операции systemd отклонена.</source>
         <translation>Authorization for the systemd operation was denied.</translation>
+    </message>
+    <message>
+        <source>Не удалось запустить операцию systemd.</source>
+        <translation>Could not start the systemd operation.</translation>
+    </message>
+    <message>
+        <source>Некорректный ответ systemctl.</source>
+        <translation>systemctl returned an invalid response.</translation>
+    </message>
+    <message>
+        <source>Некорректный ответ systemd.</source>
+        <translation>The systemd operation returned an invalid response.</translation>
+    </message>
+    <message>
+        <source>Операция не выполнена (код %1).</source>
+        <translation>Operation failed (exit code %1).</translation>
+    </message>
+    <message>
+        <source>Не удалось запустить systemctl.</source>
+        <translation>Could not start systemctl.</translation>
     </message>
 </context>
 <context>

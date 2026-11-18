@@ -4,6 +4,78 @@
 
 if(BUILD_TESTING)
     find_package(Qt6 ${QZAPRET_QT_MIN} REQUIRED COMPONENTS Test)
+    qt_add_executable(test_privilegedoperation tests/test_privilegedoperation.cpp
+        src/platform/privilegedoperation.cpp src/platform/privilegedoperation.h)
+    target_include_directories(test_privilegedoperation PRIVATE src)
+    target_link_libraries(test_privilegedoperation PRIVATE Qt6::Test Qt6::Core)
+    add_test(NAME privileged_operation COMMAND test_privilegedoperation)
+
+    qt_add_executable(test_linuxhostlistoperations
+        tests/test_linuxhostlistoperations.cpp
+        src/platform/linuxhostlistoperations.cpp
+        src/platform/linuxhostlistoperations.h
+        src/platform/privilegedoperation.cpp
+        src/platform/privilegedoperation.h
+        src/platform/privilegedoperations.h
+        src/backend/helperpath.h)
+    target_include_directories(test_linuxhostlistoperations PRIVATE src)
+    target_link_libraries(test_linuxhostlistoperations PRIVATE Qt6::Test Qt6::Core)
+    target_compile_definitions(test_linuxhostlistoperations PRIVATE
+        QZAPRET_HELPER_PATH="/nonexistent")
+    add_test(NAME linux_hostlist_operations COMMAND test_linuxhostlistoperations)
+
+    qt_add_executable(test_linuxservicecontroloperations
+        tests/test_linuxservicecontroloperations.cpp
+        src/platform/linuxservicecontroloperations.cpp
+        src/platform/linuxservicecontroloperations.h
+        src/platform/privilegedoperation.cpp
+        src/platform/privilegedoperation.h
+        src/platform/privilegedoperations.h
+        src/backend/helperpath.h)
+    target_include_directories(test_linuxservicecontroloperations PRIVATE src)
+    target_link_libraries(test_linuxservicecontroloperations PRIVATE Qt6::Test Qt6::Core)
+    target_compile_definitions(test_linuxservicecontroloperations PRIVATE
+        QZAPRET_HELPER_PATH="/nonexistent")
+    add_test(NAME linux_service_control_operations COMMAND test_linuxservicecontroloperations)
+
+    qt_add_executable(test_linuxsystemlogoperations
+        tests/test_linuxsystemlogoperations.cpp
+        src/platform/linuxsystemlogoperations.cpp
+        src/platform/linuxsystemlogoperations.h
+        src/platform/privilegedoperation.cpp
+        src/platform/privilegedoperation.h
+        src/platform/privilegedoperations.h
+        src/backend/helperpath.h)
+    target_include_directories(test_linuxsystemlogoperations PRIVATE src)
+    target_link_libraries(test_linuxsystemlogoperations PRIVATE Qt6::Test Qt6::Core)
+    target_compile_definitions(test_linuxsystemlogoperations PRIVATE
+        QZAPRET_HELPER_PATH="/nonexistent")
+    add_test(NAME linux_system_log_operations COMMAND test_linuxsystemlogoperations)
+
+    qt_add_executable(test_linuxconfigurationoperations
+        tests/test_linuxconfigurationoperations.cpp
+        src/platform/linuxconfigurationoperations.cpp
+        src/platform/linuxconfigurationoperations.h
+        src/platform/privilegedoperation.cpp
+        src/platform/privilegedoperation.h
+        src/platform/privilegedoperations.h
+        src/backend/helperpath.h)
+    target_include_directories(test_linuxconfigurationoperations PRIVATE src)
+    target_link_libraries(test_linuxconfigurationoperations PRIVATE Qt6::Test Qt6::Core)
+    target_compile_definitions(test_linuxconfigurationoperations PRIVATE
+        QZAPRET_HELPER_PATH="/nonexistent")
+    add_test(NAME linux_configuration_operations
+             COMMAND test_linuxconfigurationoperations)
+
+    qt_add_executable(test_configcontroller
+        tests/test_configcontroller.cpp
+        src/qml/configcontroller.cpp src/qml/configcontroller.h
+        src/platform/privilegedoperation.cpp src/platform/privilegedoperation.h
+        src/platform/privilegedoperations.h)
+    target_include_directories(test_configcontroller PRIVATE src src/qml)
+    target_link_libraries(test_configcontroller PRIVATE Qt6::Test Qt6::Core)
+    add_test(NAME config_controller COMMAND test_configcontroller)
+
     find_program(DBUS_RUN_SESSION_EXECUTABLE dbus-run-session REQUIRED)
     qt_add_executable(test_blockcheck tests/test_blockcheck.cpp
         src/backend/blockcheckrunner.cpp src/backend/blockcheckrunner.h)
@@ -55,34 +127,38 @@ if(BUILD_TESTING)
     add_test(NAME i18n COMMAND test_i18n)
 
     qt_add_executable(test_logscontroller tests/test_logscontroller.cpp
-        src/qml/logscontroller.cpp src/qml/logscontroller.h)
+        src/qml/logscontroller.cpp src/qml/logscontroller.h
+        src/platform/privilegedoperation.cpp src/platform/privilegedoperation.h
+        src/platform/privilegedoperations.h)
     target_include_directories(test_logscontroller PRIVATE src src/qml)
     target_link_libraries(test_logscontroller PRIVATE Qt6::Test Qt6::Core)
-    target_compile_definitions(test_logscontroller PRIVATE QZAPRET_HELPER_PATH="/nonexistent")
     add_test(NAME logs_controller COMMAND test_logscontroller)
 
     qt_add_executable(test_listscontroller tests/test_listscontroller.cpp
-        src/qml/listscontroller.cpp src/qml/listscontroller.h)
+        src/qml/listscontroller.cpp src/qml/listscontroller.h
+        src/platform/privilegedoperation.cpp src/platform/privilegedoperation.h
+        src/platform/privilegedoperations.h)
     target_include_directories(test_listscontroller PRIVATE src src/qml)
     target_link_libraries(test_listscontroller PRIVATE Qt6::Test Qt6::Core Qt6::Network)
-    target_compile_definitions(test_listscontroller PRIVATE QZAPRET_HELPER_PATH="/nonexistent")
     add_test(NAME lists_controller COMMAND test_listscontroller)
 
     qt_add_executable(test_systemdbackend tests/test_systemdbackend.cpp
         src/backend/systemdbackend.cpp src/backend/systemdbackend.h
-        src/backend/zapretbackend.h src/backend/backendtypes.h src/backend/helperpath.h)
+        src/backend/zapretbackend.h src/backend/backendtypes.h
+        src/platform/privilegedoperation.cpp src/platform/privilegedoperation.h
+        src/platform/privilegedoperations.h)
     target_include_directories(test_systemdbackend PRIVATE src)
     target_link_libraries(test_systemdbackend PRIVATE Qt6::Test Qt6::Core)
-    target_compile_definitions(test_systemdbackend PRIVATE QZAPRET_HELPER_PATH="/nonexistent")
     add_test(NAME systemd_backend COMMAND test_systemdbackend)
 
     qt_add_executable(test_applicationcontroller tests/test_applicationcontroller.cpp
         src/qml/applicationcontroller.cpp src/qml/applicationcontroller.h
         src/backend/systemdbackend.cpp src/backend/systemdbackend.h
-        src/backend/zapretbackend.h src/backend/backendtypes.h src/backend/helperpath.h)
+        src/backend/zapretbackend.h src/backend/backendtypes.h
+        src/platform/privilegedoperation.cpp src/platform/privilegedoperation.h
+        src/platform/privilegedoperations.h)
     target_include_directories(test_applicationcontroller PRIVATE src src/qml)
     target_link_libraries(test_applicationcontroller PRIVATE Qt6::Test Qt6::Core)
-    target_compile_definitions(test_applicationcontroller PRIVATE QZAPRET_HELPER_PATH="/nonexistent")
     add_test(NAME application_controller COMMAND test_applicationcontroller)
 
     qt_add_executable(test_blockcheckjobcontroller tests/test_blockcheckjobcontroller.cpp
@@ -188,9 +264,10 @@ if(BUILD_TESTING)
 
     qt_add_executable(test_profilecontroller tests/test_profilecontroller.cpp
         src/qml/profilecontroller.cpp src/qml/profilecontroller.h
-        src/profileanalyzer.cpp src/profileanalyzer.h)
+        src/profileanalyzer.cpp src/profileanalyzer.h
+        src/platform/privilegedoperation.cpp src/platform/privilegedoperation.h
+        src/platform/privilegedoperations.h)
     target_include_directories(test_profilecontroller PRIVATE src src/qml)
     target_link_libraries(test_profilecontroller PRIVATE Qt6::Test Qt6::Core)
-    target_compile_definitions(test_profilecontroller PRIVATE QZAPRET_HELPER_PATH="/nonexistent")
     add_test(NAME profile_controller COMMAND test_profilecontroller)
 endif()

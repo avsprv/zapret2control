@@ -3,12 +3,36 @@
 #include "backend/systemdbackend.h"
 #include "qml/traycontroller.h"
 #include "platform/linuxautostartintegration.h"
+#include "platform/linuxconfigurationoperations.h"
+#include "platform/linuxhostlistoperations.h"
+#include "platform/linuxservicecontroloperations.h"
+#include "platform/linuxsystemlogoperations.h"
 
 namespace Zapret::Platform {
 
 ZapretBackend *createBackend()
 {
-    return new SystemdBackend;
+    return new SystemdBackend(createServiceControlOperations());
+}
+
+ConfigurationOperations *createConfigurationOperations()
+{
+    return new LinuxConfigurationOperations;
+}
+
+HostListOperations *createHostListOperations()
+{
+    return new LinuxHostListOperations;
+}
+
+SystemLogOperations *createSystemLogOperations()
+{
+    return new LinuxSystemLogOperations;
+}
+
+ServiceControlOperations *createServiceControlOperations()
+{
+    return new LinuxServiceControlOperations;
 }
 
 TrayIntegration *createTrayIntegration()

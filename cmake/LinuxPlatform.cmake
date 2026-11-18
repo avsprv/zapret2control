@@ -11,6 +11,7 @@ set(QZAPRET_HELPER "${CMAKE_INSTALL_FULL_LIBEXECDIR}/zapret2control/zapret2contr
 target_sources(zapret2control PRIVATE
     src/platform/platformintegration_linux.cpp
     src/platform/platformintegration.h
+    src/platform/trayintegration.h
     src/qml/traycontroller.cpp
     src/qml/traycontroller.h
     src/qml/dbusmenu.cpp

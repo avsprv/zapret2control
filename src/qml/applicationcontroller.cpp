@@ -4,6 +4,27 @@
 
 #include <QTimer>
 
+namespace {
+ZapretBackend::State toBackendState(Zapret::Backend::EngineState state)
+{
+    using Zapret::Backend::EngineState;
+
+    switch (state) {
+    case EngineState::Active:
+        return ZapretBackend::State::Active;
+    case EngineState::Inactive:
+        return ZapretBackend::State::Inactive;
+    case EngineState::Failed:
+        return ZapretBackend::State::Failed;
+    case EngineState::Starting:
+    case EngineState::Stopping:
+    case EngineState::Unknown:
+    default:
+        return ZapretBackend::State::Unknown;
+    }
+}
+} // namespace
+
 ApplicationController::ApplicationController(QObject *parent)
     : ApplicationController(new SystemdBackend, parent)
 {
@@ -35,13 +56,18 @@ ApplicationController::ApplicationController(ZapretBackend *backend, QObject *pa
         m_errorMessage = message;
         emit errorMessageChanged();
     });
-    connect(m_backend, &ZapretBackend::unitActionFinishedForRequest, this,
-            [this](quint64 requestId, const QString &, ZapretBackend::State state, bool) {
-        if (requestId == 0 || requestId != m_pendingRequestId)
+    connect(m_backend, &ZapretBackend::operationFinished, this,
+            [this](const Zapret::Backend::OperationResult &result) {
+        if (result.requestId == 0 || result.requestId != m_pendingRequestId)
             return;
 
         m_pendingRequestId = 0;
-        setState(state);
+        setState(toBackendState(result.state));
+        if (!result.succeeded() && !result.message.isEmpty()
+            && m_errorMessage != result.message) {
+            m_errorMessage = result.message;
+            emit errorMessageChanged();
+        }
         setServiceActionBusy(false);
     });
     refresh();

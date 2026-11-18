@@ -14,6 +14,8 @@ public:
     int startCount = 0;
     int stopCount = 0;
     int bootChangeCount = 0;
+    bool deferActions = false;
+    quint64 lastRequestId = 0;
 
     void refresh() override
     {
@@ -38,8 +40,10 @@ public:
     void start(quint64 requestId) override
     {
         ++startCount;
-        emit unitActionFinishedForRequest(requestId, QStringLiteral("start"),
-                                          ZapretBackend::State::Active, true);
+        lastRequestId = requestId;
+        if (!deferActions)
+            emit unitActionFinishedForRequest(requestId, QStringLiteral("start"),
+                                              ZapretBackend::State::Active, true);
     }
 
     void stop() override
@@ -51,8 +55,10 @@ public:
     void stop(quint64 requestId) override
     {
         ++stopCount;
-        emit unitActionFinishedForRequest(requestId, QStringLiteral("stop"),
-                                          ZapretBackend::State::Inactive, true);
+        lastRequestId = requestId;
+        if (!deferActions)
+            emit unitActionFinishedForRequest(requestId, QStringLiteral("stop"),
+                                              ZapretBackend::State::Inactive, true);
     }
 
     void setBootEnabled(bool enabled) override
@@ -62,6 +68,18 @@ public:
         emit unitActionFinished(enabled ? QStringLiteral("enable") : QStringLiteral("disable"),
                                 ZapretBackend::State::Unknown, true);
     }
+
+    void setBootEnabled(bool enabled, quint64 requestId) override
+    {
+        ++bootChangeCount;
+        lastRequestId = requestId;
+        if (!deferActions) {
+            emit bootEnabledChanged(enabled);
+            emit unitActionFinishedForRequest(
+                requestId, enabled ? QStringLiteral("enable") : QStringLiteral("disable"),
+                ZapretBackend::State::Unknown, true);
+        }
+    }
 };
 
 class ApplicationControllerTest final : public QObject
@@ -70,6 +88,7 @@ class ApplicationControllerTest final : public QObject
 
 private slots:
     void injectedBackendReceivesControllerCommands();
+    void ignoresCompletionForUnrelatedRequest();
     void controllerOwnsInjectedBackend();
 };
 
@@ -99,6 +118,28 @@ void ApplicationControllerTest::injectedBackendReceivesControllerCommands()
     QCOMPARE(backend->bootChangeCount, 1);
     QVERIFY(controller.bootEnabled());
     QVERIFY(!controller.operationsBusy());
+}
+
+void ApplicationControllerTest::ignoresCompletionForUnrelatedRequest()
+{
+    auto *backend = new FakeBackend;
+    backend->deferActions = true;
+    ApplicationController controller(backend, nullptr);
+
+    controller.startService();
+    const quint64 requestId = backend->lastRequestId;
+    QVERIFY(requestId != 0);
+    QVERIFY(controller.operationsBusy());
+
+    emit backend->unitActionFinishedForRequest(
+        requestId + 1, QStringLiteral("start"), ZapretBackend::State::Active, true);
+    QVERIFY(controller.operationsBusy());
+    QVERIFY(!controller.serviceActive());
+
+    emit backend->unitActionFinishedForRequest(
+        requestId, QStringLiteral("start"), ZapretBackend::State::Active, true);
+    QVERIFY(!controller.operationsBusy());
+    QVERIFY(controller.serviceActive());
 }
 
 void ApplicationControllerTest::controllerOwnsInjectedBackend()

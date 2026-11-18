@@ -4,6 +4,7 @@
 #include "qml/traycontroller.h"
 #include "platform/linuxautostartintegration.h"
 #include "platform/linuxconfigurationoperations.h"
+#include "platform/linuxhostlistoperations.h"
 
 namespace Zapret::Platform {
 
@@ -15,6 +16,11 @@ ZapretBackend *createBackend()
 ConfigurationOperations *createConfigurationOperations()
 {
     return new LinuxConfigurationOperations;
+}
+
+HostListOperations *createHostListOperations()
+{
+    return new LinuxHostListOperations;
 }
 
 TrayIntegration *createTrayIntegration()

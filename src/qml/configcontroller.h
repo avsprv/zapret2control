@@ -58,6 +58,5 @@ private:
     bool m_loaded = false;
     QByteArray m_originalBytes;
     QByteArray m_operationOutput;
-    QByteArray m_operationError;
     QByteArray m_pendingInput;
 };

@@ -69,10 +69,12 @@ int main(int argc, char *argv[])
 
     std::unique_ptr<Zapret::Platform::ConfigurationOperations> configurationOperations(
         Zapret::Platform::createConfigurationOperations());
+    std::unique_ptr<Zapret::Platform::HostListOperations> hostListOperations(
+        Zapret::Platform::createHostListOperations());
     ConfigController configController(configurationOperations.get());
     ProfileController profileController(configurationOperations.get());
     LogsController logsController;
-    ListsController listsController;
+    ListsController listsController(hostListOperations.get());
     BlockcheckJobController blockcheckController;
     UpdateController updateController(&settingsManager);
 

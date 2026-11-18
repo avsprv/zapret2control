@@ -6,7 +6,7 @@
 - KDE Plasma 6, Qt 6, current Kirigami, C++ and QML.
 - Debian 13 and Fedora are the initial package/CI targets.
 - Windows support, Windows abstractions, Windows packaging, and Windows CI are out of scope.
-- The application is a graphical control surface for upstream zapret2; it must not become a second implementation of zapret2.
+- The application is a complete graphical control surface for the applicable documented user-facing capabilities of upstream zapret2. It must preserve native zapret2 semantics and must not become a second implementation of zapret2. A full, versioned upstream capability matrix is a prerequisite for implementation; the first-release scope must not be reduced to installer + service controls + blockcheck.
 
 ## Rewrite principles
 
@@ -23,15 +23,25 @@
 
 ## First-release user journeys
 
-1. Detect whether zapret2 is installed and identify its upstream version/revision.
-2. Install zapret2 through the official `install_easy.sh` workflow.
-3. Start, stop, restart, and inspect the upstream systemd service.
-4. Run blockcheck2 with explicit test settings, visible live output, cancellation, and cleanup status.
-5. Review diagnostic results without automatically applying them.
-6. Open and safely edit supported zapret2 configuration files, with validation and backup.
-7. Run the official `uninstall_easy.sh` workflow and separately offer deletion of residual installation files.
-8. Configure application behavior, tray visibility, and autostart.
-9. View application/upstream information and logs.
+The following are baseline journeys, not a complete capability list. Before implementation, derive the complete list from both upstream manuals and source at the pinned compatibility baseline and record it in `docs/UPSTREAM_CAPABILITY_MATRIX.md`.
+
+1. Discover installation, upstream revision, runtime prerequisites, service and list-update state.
+2. Install, reinstall/replace, and remove zapret2 using official upstream workflows, preserving user data according to upstream behavior.
+3. Manage all applicable documented service lifecycle and startup behaviors.
+4. Discover and use the upstream-supported version/update/reinstall workflow.
+5. Inspect, edit, validate, and preserve all applicable upstream configuration semantics, including advanced options.
+6. Manage all applicable upstream lists, list sources, downloads, refreshes, and scheduled updates.
+7. Access all applicable documented runtime modes, filters, protocol/IP-family controls, and other user-facing configuration capabilities.
+8. Run blockcheck2 with all applicable documented suites and test dimensions, visible logs, cancellation, and cleanup reporting.
+9. Review diagnostic output and upstream-supported strategy workflows without silently applying results.
+10. Access applicable upstream logs, diagnostics, custom scripts, and recovery/cleanup functions.
+11. Configure application-only preferences, tray visibility, notifications, and autostart separately from zapret2 settings.
+
+Every journey must map to one or more capability IDs in the matrix. No applicable native capability may be omitted solely because it is inconvenient to expose.
+
+## Upstream capability coverage gate
+
+`docs/UPSTREAM_CAPABILITY_MATRIX.md` is mandatory and must be completed from `docs/manual.md`, `docs/manual.en.md`, and source code at the pinned upstream revision before implementation is considered ready to scale. It must record native mechanism, parameters, privilege requirements, side effects, output/errors, GUI exposure, implementation state, tests, and limitations for every applicable capability. Common controls belong in guided UI; advanced supported options must remain accessible in an advanced interface or through a transparent upstream terminal workflow. Do not fabricate controls or silently discard supported options.
 
 ## Initial architecture (intentionally small)
 
@@ -40,7 +50,9 @@
 - **Process runner:** one small component for supervised external processes (argument vector, environment, stdout/stderr, cancellation, exit code).
 - **Privilege boundary:** use polkit/pkexec for narrowly scoped privileged actions; do not make the whole GUI run as root.
 - **Upstream lifecycle adapter:** stages a pinned upstream release and launches the official installer/uninstaller in an interactive terminal. It does not duplicate their logic.
-- **Blockcheck runner:** launches the upstream script and streams raw output; optional parser isolated and version-bound.
+- **Upstream process integration:** a shared, testable process supervisor launches native upstream scripts/commands with verified argument/environment contracts, terminal interaction where required, stdout/stderr capture, cancellation and exit reporting.
+- **Blockcheck runner:** launches the upstream script and matching assets from the same pinned revision; exposes applicable documented inputs, streams raw output, and reports cleanup; any parser is optional, isolated, fixture-tested and version-bound.
+- **Capability-driven UI:** exposes every applicable documented native capability through guided controls, advanced controls, or a clearly explained terminal passthrough; does not clone upstream algorithms.
 - **Configuration access:** explicit file model, safe writes, validation, and recoverable backups; no shell evaluation.
 - **KDE integration:** standard Kirigami navigation, standard StatusNotifierItem integration, desktop autostart, notifications, and semantic icon/theme assets.
 
@@ -65,8 +77,8 @@ Avoid introducing a generic cross-platform backend, a plugin framework, a custom
 3. **Read-only detection:** installed state, version, systemd service/timer state, diagnostics without modifying the system.
 4. **Service control:** direct systemd integration with explicit authorization and error handling.
 5. **Installer/uninstaller integration:** verified release staging and official interactive scripts; clean-install and existing-install tests.
-6. **Blockcheck integration:** process supervision, controlled inputs, logs, cancellation, cleanup reporting, result presentation.
-7. **Configuration and profiles:** only after source/manual mapping and safe validation rules.
+6. **Native feature coverage:** implement the capability matrix in dependency order, including configuration, lists, modes, runtime options, updates, diagnostics, and other applicable upstream workflows.
+7. **Blockcheck integration:** process supervision, all applicable documented suites/inputs, logs, cancellation, cleanup reporting, result presentation.
 8. **Tray/autostart/settings:** standard KDE integration and independent settings.
 9. **Packaging and release:** Debian 13 DEB, Fedora RPM, install/remove smoke tests, CI on one SHA, release verification.
 
@@ -84,7 +96,9 @@ Avoid introducing a generic cross-platform backend, a plugin framework, a custom
 - A fresh Debian 13/Fedora installation can be detected and managed without undocumented assumptions.
 - Official upstream installer/uninstaller behavior is preserved and clearly disclosed.
 - Service actions report actual systemd state, not merely successful process launch.
-- Blockcheck can be started, observed, cancelled, and audited; cleanup failures are visible.
+- Every applicable documented upstream user-facing capability is represented in the completed capability matrix and has a verified access path in the application (guided UI, advanced UI, or transparent native terminal workflow).
+- No native option or workflow is silently lost, reinterpreted, or automatically applied.
+- Blockcheck can be started with all applicable documented test settings, observed, cancelled, and audited; cleanup failures are visible.
 - No shell evaluation of user or upstream output.
 - Tray icon can be explicitly shown/hidden; close-to-tray and autostart are independent.
 - No duplicated page title/brand and no simultaneous primary pages.

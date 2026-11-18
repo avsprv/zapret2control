@@ -5,8 +5,8 @@
 #include "platform/linuxautostartintegration.h"
 #include "platform/linuxconfigurationoperations.h"
 #include "platform/linuxhostlistoperations.h"
-#include "platform/linuxsystemlogoperations.h"
 #include "platform/linuxservicecontroloperations.h"
+#include "platform/linuxsystemlogoperations.h"
 
 namespace Zapret::Platform {
 

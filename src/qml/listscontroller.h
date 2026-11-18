@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QPointer>
 #include <QString>
-#include <QStringList>
 
 #include "platform/privilegedoperations.h"
 

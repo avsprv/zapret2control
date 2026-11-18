@@ -1,4 +1,5 @@
 #include <QtTest>
+#include <algorithm>
 #include <QProcess>
 #include <QSignalSpy>
 #include <QPointer>

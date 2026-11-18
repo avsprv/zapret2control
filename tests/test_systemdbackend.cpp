@@ -131,6 +131,7 @@ private slots:
     void continuesAfterNonzeroExit();
     void releasesQueueWhenStateQueryCannotStart();
     void correlatedVerificationDoesNotPublishGlobalState();
+    void correlatedLifecycleActionsEmitOnlyRequestCompletion();
     void ordinaryVerificationPublishesGlobalState();
     void newerVerificationSupersedesOlderVerification();
     void refreshDoesNotInvalidateLifecycleVerification();
@@ -203,6 +204,23 @@ void SystemdBackendTest::correlatedVerificationDoesNotPublishGlobalState()
     QTRY_COMPARE_WITH_TIMEOUT(verified.count(), 1, 3000);
     QCOMPARE(verified.at(0).at(0).toULongLong(), quint64(42));
     QCOMPARE(globalState.count(), 0);
+}
+
+void SystemdBackendTest::correlatedLifecycleActionsEmitOnlyRequestCompletion()
+{
+    TestSystemdBackend backend;
+    QSignalSpy genericFinished(&backend, &ZapretBackend::unitActionFinished);
+    QSignalSpy requestFinished(&backend, &ZapretBackend::unitActionFinishedForRequest);
+
+    backend.start(quint64(101));
+    backend.stop(quint64(202));
+
+    QTRY_COMPARE_WITH_TIMEOUT(requestFinished.count(), 2, 3000);
+    QCOMPARE(genericFinished.count(), 0);
+    QCOMPARE(requestFinished.at(0).at(0).toULongLong(), quint64(101));
+    QCOMPARE(requestFinished.at(0).at(1).toString(), QStringLiteral("start"));
+    QCOMPARE(requestFinished.at(1).at(0).toULongLong(), quint64(202));
+    QCOMPARE(requestFinished.at(1).at(1).toString(), QStringLiteral("stop"));
 }
 
 void SystemdBackendTest::ordinaryVerificationPublishesGlobalState()

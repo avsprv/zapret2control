@@ -18,6 +18,7 @@ private Q_SLOTS:
     void startsFixedServiceWithoutExposingHelperOutput();
     void mapsAuthorizationDenial();
     void enforcesActionTimeout();
+    void enforcesQueryTimeout();
     void rejectsOversizedQueryOutput();
     void rejectsOversizedQueryDiagnostics();
 
@@ -155,6 +156,19 @@ void TestLinuxServiceControlOperations::enforcesActionTimeout()
     QTRY_COMPARE_WITH_TIMEOUT(finishedSpy.size(), 1, 3000);
     QCOMPARE(finishedSpy.constFirst().constFirst().value<OperationResult>().status,
              OperationStatus::TimedOut);
+}
+
+void TestLinuxServiceControlOperations::enforcesQueryTimeout()
+{
+    qputenv("QZAPRET_SYSTEMCTL_MODE", "timeout");
+    LinuxServiceControlOperations operations(100, 600000);
+    PlatformOperation *operation = operations.queryEngineState();
+    QSignalSpy finishedSpy(operation, &PlatformOperation::finished);
+
+    QTRY_COMPARE_WITH_TIMEOUT(finishedSpy.size(), 1, 3000);
+    QCOMPARE(finishedSpy.constFirst().constFirst().value<OperationResult>().status,
+             OperationStatus::TimedOut);
+    qunsetenv("QZAPRET_SYSTEMCTL_MODE");
 }
 
 void TestLinuxServiceControlOperations::rejectsOversizedQueryOutput()

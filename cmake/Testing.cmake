@@ -10,6 +10,20 @@ if(BUILD_TESTING)
     target_link_libraries(test_privilegedoperation PRIVATE Qt6::Test Qt6::Core)
     add_test(NAME privileged_operation COMMAND test_privilegedoperation)
 
+    qt_add_executable(test_linuxhostlistoperations
+        tests/test_linuxhostlistoperations.cpp
+        src/platform/linuxhostlistoperations.cpp
+        src/platform/linuxhostlistoperations.h
+        src/platform/privilegedoperation.cpp
+        src/platform/privilegedoperation.h
+        src/platform/privilegedoperations.h
+        src/backend/helperpath.h)
+    target_include_directories(test_linuxhostlistoperations PRIVATE src)
+    target_link_libraries(test_linuxhostlistoperations PRIVATE Qt6::Test Qt6::Core)
+    target_compile_definitions(test_linuxhostlistoperations PRIVATE
+        QZAPRET_HELPER_PATH="/nonexistent")
+    add_test(NAME linux_hostlist_operations COMMAND test_linuxhostlistoperations)
+
     qt_add_executable(test_linuxconfigurationoperations
         tests/test_linuxconfigurationoperations.cpp
         src/platform/linuxconfigurationoperations.cpp
@@ -92,7 +106,9 @@ if(BUILD_TESTING)
     add_test(NAME logs_controller COMMAND test_logscontroller)
 
     qt_add_executable(test_listscontroller tests/test_listscontroller.cpp
-        src/qml/listscontroller.cpp src/qml/listscontroller.h)
+        src/qml/listscontroller.cpp src/qml/listscontroller.h
+        src/platform/privilegedoperation.cpp src/platform/privilegedoperation.h
+        src/platform/privilegedoperations.h)
     target_include_directories(test_listscontroller PRIVATE src src/qml)
     target_link_libraries(test_listscontroller PRIVATE Qt6::Test Qt6::Core Qt6::Network)
     target_compile_definitions(test_listscontroller PRIVATE QZAPRET_HELPER_PATH="/nonexistent")

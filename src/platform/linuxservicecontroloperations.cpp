@@ -41,7 +41,7 @@ PlatformOperation *completedOperation(QObject *parent, const OperationResult &re
 
 LinuxServiceControlOperations::LinuxServiceControlOperations(
     int queryTimeoutMs, int actionTimeoutMs, QObject *parent)
-    : QObject(parent)
+    : ServiceControlOperations(parent)
     , m_queryTimeoutMs(qMax(queryTimeoutMs, MinimumTimeoutMs))
     , m_actionTimeoutMs(qMax(actionTimeoutMs, MinimumTimeoutMs))
 {

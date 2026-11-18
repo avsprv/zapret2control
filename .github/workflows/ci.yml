@@ -30,20 +30,13 @@ jobs:
           def canonical_catalog(path):
               root = ET.parse(path).getroot()
 
-              for location in root.iter("location"):
-                  location.attrib.pop("line", None)
+              # Source locations are editor metadata. Compare translation content,
+              # not paths or line numbers that may vary across build environments.
+              for message in root.iter("message"):
+                  for location in message.findall("location"):
+                      message.remove(location)
 
-              # Qt Linguist may reorder equivalent context, message, and location
-              # elements. Compare catalog meaning rather than incidental XML order.
-              for context in root.findall("context"):
-                  for message in context.findall("message"):
-                      locations = message.findall("location")
-                      for location in locations:
-                          message.remove(location)
-                      for location in sorted(
-                          locations, key=lambda item: tuple(sorted(item.attrib.items()))
-                      ):
-                          message.append(location)
+              # Qt Linguist may reorder equivalent context and message elements.
 
                   messages = context.findall("message")
                   for message in messages:

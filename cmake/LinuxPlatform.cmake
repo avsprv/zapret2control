@@ -9,6 +9,8 @@ find_package(Qt6 ${QZAPRET_QT_MIN} REQUIRED COMPONENTS DBus)
 set(QZAPRET_HELPER "${CMAKE_INSTALL_FULL_LIBEXECDIR}/zapret2control/zapret2control-helper")
 
 target_sources(zapret2control PRIVATE
+    src/platform/platformintegration_linux.cpp
+    src/platform/platformintegration.h
     src/qml/traycontroller.cpp
     src/qml/traycontroller.h
     src/qml/dbusmenu.cpp

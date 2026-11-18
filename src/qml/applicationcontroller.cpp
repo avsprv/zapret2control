@@ -1,7 +1,5 @@
 #include "applicationcontroller.h"
 
-#include "backend/systemdbackend.h"
-
 #include <QTimer>
 #include <QVariantMap>
 
@@ -52,11 +50,6 @@ ZapretBackend::State toBackendState(Zapret::Backend::EngineState state)
     }
 }
 } // namespace
-
-ApplicationController::ApplicationController(QObject *parent)
-    : ApplicationController(new SystemdBackend, parent)
-{
-}
 
 ApplicationController::ApplicationController(ZapretBackend *backend, QObject *parent)
     : QObject(parent)

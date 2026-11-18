@@ -11,6 +11,7 @@
 #include <QWindow>
 
 #include "applicationcontroller.h"
+#include "platform/platformintegration.h"
 #include "configcontroller.h"
 #include "blockcheckjobcontroller.h"
 #include "i18n.h"
@@ -48,7 +49,7 @@ int main(int argc, char *argv[])
     parser.process(app);
     const bool startMinimized = parser.isSet(minimizedOption);
 
-    ApplicationController controller;
+    ApplicationController controller(Zapret::Platform::createBackend());
     SettingsManager settingsManager;
     AutostartController autostartController;
     TrayController trayController;

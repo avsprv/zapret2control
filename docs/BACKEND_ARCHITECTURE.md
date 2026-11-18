@@ -20,7 +20,7 @@ The abstraction is not platform-neutral yet. In particular:
 
 1. `setBootEnabled(bool)` models a boot-enabled system service, not a generic application capability.
 2. `unitActionFinished` and `unitActionFinishedForRequest` expose systemd unit terminology.
-3. `ApplicationController` directly constructs `SystemdBackend` in `src/qml/applicationcontroller.cpp`.
+3. The production composition root in `src/qml/main.cpp` selects the platform backend; `ApplicationController` receives it through dependency injection.
 4. The controller exposes `bootEnabled` and `setBootEnabled()` as its public QML-facing contract.
 5. `SystemdBackend` owns systemctl process execution, systemd unit parsing, and privileged helper invocation.
 
@@ -108,11 +108,11 @@ The existing `bootEnabled` property should remain available to the Linux UI unti
 
 ## 5. Composition and platform selection
 
-Remove direct construction of `SystemdBackend` from `ApplicationController` only when a safe composition path is ready.
+The production composition root selects the platform backend and injects it into `ApplicationController`. Platform-specific backend construction must remain outside the controller and QML layer.
 
 Preferred direction:
 
-- construct the platform backend in a composition/factory layer;
+- construct the platform backend in a platform composition/factory layer;
 - inject the backend through the controller constructor or a narrowly scoped factory;
 - select the implementation at compile time using the platform-specific target sources;
 - keep OS selection out of QML;

@@ -5,6 +5,7 @@
 #include "platform/linuxautostartintegration.h"
 #include "platform/linuxconfigurationoperations.h"
 #include "platform/linuxhostlistoperations.h"
+#include "platform/linuxsystemlogoperations.h"
 
 namespace Zapret::Platform {
 
@@ -21,6 +22,11 @@ ConfigurationOperations *createConfigurationOperations()
 HostListOperations *createHostListOperations()
 {
     return new LinuxHostListOperations;
+}
+
+SystemLogOperations *createSystemLogOperations()
+{
+    return new LinuxSystemLogOperations;
 }
 
 TrayIntegration *createTrayIntegration()

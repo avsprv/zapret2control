@@ -24,6 +24,10 @@ HostListOperations *createHostListOperations();
 // The caller takes ownership of the returned object.
 SystemLogOperations *createSystemLogOperations();
 
+// Creates the fixed-unit service-control adapter selected for the current platform.
+// The caller takes ownership of the returned object.
+ServiceControlOperations *createServiceControlOperations();
+
 // Creates the desktop tray adapter selected for the current platform.
 // The caller takes ownership of the returned object.
 TrayIntegration *createTrayIntegration();

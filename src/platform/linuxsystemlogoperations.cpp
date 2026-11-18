@@ -5,6 +5,7 @@
 #include <QProcess>
 #include <QTimer>
 
+#include <memory>
 #include <optional>
 
 namespace Zapret::Platform {
@@ -80,6 +81,9 @@ PlatformOperation *LinuxSystemLogOperations::readRecentLogs(LogLineCount lineCou
     auto diagnosticSize = std::make_shared<qsizetype>(0);
 
     timeout->setSingleShot(true);
+    connect(process, &QProcess::started, process, [process] {
+        process->closeWriteChannel();
+    });
     connect(timeout, &QTimer::timeout, process, [process, timedOut] {
         *timedOut = true;
         process->kill();

@@ -556,7 +556,7 @@ Manual describes:
 - `veryquick`: further short-circuits remaining variants in selected fake-based families after first successful combination;
 - `force`: maximizes tested variants without pruning based on previous results.
 
-**Manual inconsistency:** the shell-variable reference table lists `SCANLEVEL=quick|standard|force` and omits `veryquick`, while the scan-level prose explicitly documents `veryquick`. The source must be checked before exposing this value in a GUI. This discrepancy remains recorded; do not silently resolve it.
+**Manual inconsistency resolved against source:** the shell-variable reference table lists `SCANLEVEL=quick|standard|force` and omits `veryquick`, while the scan-level prose documents `veryquick`. The v1.0.7 `blockcheck2.sh` source explicitly presents `veryquick quick standard force` in its interactive selection and checks `veryquick` in execution logic. Therefore `veryquick` is accepted by this pinned source; the omission is a documentation-table defect. Keep the discrepancy recorded and use source-confirmed values for the v1.0.7 adapter.
 
 ### BC-06 — Standard test suite
 
@@ -602,7 +602,7 @@ Documented shell variables include:
 - extra engine args: `PKTWS_EXTRA_PRE`, `PKTWS_EXTRA_PRE_1..9`, `PKTWS_EXTRA_POST`, `PKTWS_EXTRA_POST_1..9`;
 - simulation: `SIMULATE`, `SIM_SUCCESS_RATE`.
 
-The standard suite additionally documents `MIN_TTL`, `MAX_TTL`, `MIN_AUTOTTL_DELTA`, `MAX_AUTOTTL_DELTA`, `FAKE_REPEATS`, `FOOLINGS46_TCP`, `FOOLINGS6_TCP`, fake/pattern file paths, `MULTIDISORDER`, and individual `NOTEST_*` switches for the modules above.
+The standard suite additionally documents `MIN_TTL`, `MAX_TTL`, `MIN_AUTOTTL_DELTA`, `MAX_AUTOTTL_DELTA`, `FAKE_REPEATS`, `FOOLINGS46_TCP`, `FOOLINGS6_TCP`, `FAKE_HTTP`, `FAKE_HTTPS`, `FAKE_QUIC`, `FAKED_PATTERN_HTTP`, `FAKED_PATTERN_HTTPS`, `SEQOVL_PATTERN_HTTP`, `SEQOVL_PATTERN_HTTPS`, `MULTIDISORDER`, `HOSTFAKE`, and individual `NOTEST_*` switches: `NOTEST_BASIC_HTTP`, `NOTEST_MISC_HTTP`, `NOTEST_MISC_HTTPS`, `NOTEST_OOB_HTTP`, `NOTEST_OOB_HTTPS`, `NOTEST_MULTI_HTTP`, `NOTEST_MULTI_HTTPS`, `NOTEST_SEQOVL_HTTP`, `NOTEST_SEQOVL_HTTPS`, `NOTEST_SYNDATA_HTTP`, `NOTEST_SYNDATA_HTTPS`, `NOTEST_FAKE_HTTP`, `NOTEST_FAKE_HTTPS`, `NOTEST_FAKED_HTTP`, `NOTEST_FAKED_HTTPS`, `NOTEST_HOSTFAKE_HTTP`, `NOTEST_HOSTFAKE_HTTPS`, `NOTEST_FAKE_MULTI_HTTP`, `NOTEST_FAKE_MULTI_HTTPS`, `NOTEST_FAKE_FAKED_HTTP`, `NOTEST_FAKE_FAKED_HTTPS`, `NOTEST_FAKE_HOSTFAKE_HTTP`, `NOTEST_FAKE_HOSTFAKE_HTTPS`, and `NOTEST_QUIC`.
 
 Application must expose common inputs in a guided form and all applicable documented settings in advanced options. Keep raw output, exact settings and exit status. Support cancellation only with verified cleanup reporting. Do not stop the active zapret service or other bypass tools without explicit user approval and a tested restore plan.
 
@@ -680,7 +680,7 @@ The source tree at the pinned tag contains 253 tracked files. The complete Git t
 
 ## 13. Known documentation/source discrepancies and limits
 
-1. **blockcheck scan-level values:** prose documents `veryquick`, while the shell-variable table omits it from the listed `SCANLEVEL` values. Verify source acceptance before exposing.
+1. **blockcheck scan-level values:** prose documents `veryquick`, while the shell-variable table omits it. The pinned v1.0.7 source confirms that `veryquick` is an accepted interactive value and is used by execution logic. This is a documentation-table omission, not an unsupported source option.
 2. **Lua module documentation coverage:** source ships obfs, pcap and tests modules that do not each have a full dedicated manual API chapter. Source inspection and tests are required before GUI exposure.
 3. **Update interface:** manual documents interactive installer/replacement but no stable non-interactive update API. Do not invent one.
 4. **List-provider freshness:** the manual itself questions the current relevance of some list sources. Show provenance and refresh results.

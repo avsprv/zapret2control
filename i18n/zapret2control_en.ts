@@ -1094,11 +1094,7 @@
         <source>Чтение журнала zapret2.service…</source>
         <translation>Reading zapret2.service journal…</translation>
     </message>
-    <message>
-        <location filename="../src/qml/logscontroller.cpp" line="63"/>
-        <source>Полученный журнал превысил допустимый размер; чтение остановлено.</source>
-        <translation>Retrieved journal exceeded the size limit; reading was stopped.</translation>
-    </message>
+
     <message>
         <location filename="../src/qml/logscontroller.cpp" line="86"/>
         <source>Журнал превышает ограничение 1 MiB; данные не отображены.</source>
@@ -1109,11 +1105,7 @@
         <source>Не удалось прочитать журнал (код %1).</source>
         <translation>Could not read the journal (exit code %1).</translation>
     </message>
-    <message>
-        <location filename="../src/qml/logscontroller.cpp" line="92"/>
-        <source>Не удалось прочитать журнал: %1</source>
-        <translation>Could not read the journal: %1</translation>
-    </message>
+
     <message>
         <location filename="../src/qml/logscontroller.cpp" line="98"/>
         <source>Журнал содержит некорректный UTF-8; данные не отображены.</source>
@@ -1125,9 +1117,24 @@
         <translation>Journal refreshed: received %1 bytes.</translation>
     </message>
     <message>
-        <location filename="../src/qml/logscontroller.cpp" line="112"/>
-        <source>Не удалось запустить helper: %1</source>
-        <translation>Could not start the helper: %1</translation>
+        <source>Авторизация отменена.</source>
+        <translation>Authorization was cancelled.</translation>
+    </message>
+    <message>
+        <source>Операция превысила время ожидания.</source>
+        <translation>The operation timed out.</translation>
+    </message>
+    <message>
+        <source>Не удалось запустить helper.</source>
+        <translation>Could not start the helper.</translation>
+    </message>
+    <message>
+        <source>Получен некорректный ответ от helper.</source>
+        <translation>The helper returned an invalid response.</translation>
+    </message>
+    <message>
+        <source>Операции с журналом недоступны.</source>
+        <translation>Log operations are unavailable.</translation>
     </message>
 </context>
 <context>

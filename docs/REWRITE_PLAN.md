@@ -60,6 +60,8 @@ Avoid introducing a generic cross-platform backend, a plugin framework, a custom
 
 ## UI direction
 
+The complete page hierarchy, page responsibilities, capability mapping and visual acceptance checklist are specified in [`docs/UI_STRUCTURE.md`](UI_STRUCTURE.md). Treat that document as the UI source of truth. Review the shell/navigation visually in KDE Plasma 6 before implementing page functionality.
+
 - One selected section is visible in the content area.
 - No duplicate application logo/name in the sidebar and page header.
 - Compact navigation; the content page owns its single title.

@@ -95,6 +95,8 @@ qt_add_executable(zapret2control
     src/backend/zapretbackend.h
     src/backend/backendtypes.h
     src/backend/helperpath.h
+    src/platform/privilegedoperation.cpp
+    src/platform/privilegedoperation.h
 )
 qt_add_qml_module(zapret2control
     URI org.avsprv.zapret2control

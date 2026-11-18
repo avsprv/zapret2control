@@ -166,14 +166,14 @@ Licensing/provenance requirements include: Cygwin runtime LGPL-3.0-or-later with
 
 ## 7. Installation, data, update, and removal
 
-Only **per-machine** installation is supported, under `%ProgramFiles%\\zapret2control\\`. Per-user and portable modes are out of scope.
+Only **per-machine** installation is supported, under `%ProgramFiles%\zapret2control\`. Per-user and portable modes are out of scope.
 
 | Data | Location | Ownership |
 |---|---|---|
-| Immutable binaries/runtime | `%ProgramFiles%\\zapret2control\\` | Installer-owned; standard users cannot modify privileged files |
-| Per-user settings | `%APPDATA%\\zapret2control\\` | Current user |
-| Per-user logs/transient diagnostics | `%LOCALAPPDATA%\\zapret2control\\` | Current user; documented retention |
-| Machine-wide state, only if justified | `%ProgramData%\\zapret2control\\` | Restrictive ACL; minimum access |
+| Immutable binaries/runtime | `%ProgramFiles%\zapret2control\` | Installer-owned; standard users cannot modify privileged files |
+| Per-user settings | `%APPDATA%\zapret2control\` | Current user |
+| Per-user logs/transient diagnostics | `%LOCALAPPDATA%\zapret2control\` | Current user; documented retention |
+| Machine-wide state, only if justified | `%ProgramData%\zapret2control\` | Restrictive ACL; minimum access |
 
 Do not store mutable user data in Program Files. Do not create machine-wide state without a concrete need and documented ACLs.
 

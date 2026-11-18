@@ -112,7 +112,7 @@ void ProfileController::startOperation(PlatformOperation *operation, bool writin
 {
     if (!operation) {
         setBusy(false);
-        setStatus(tr("Операция недоступна на этой платформе."));
+        setStatus(tr("Не удалось запустить helper: %1").arg(QStringLiteral("unavailable")));
         return;
     }
 
@@ -153,14 +153,10 @@ void ProfileController::finishOperation(PlatformOperation *operation, bool writi
     setBusy(false);
 
     if (!result.succeeded()) {
-        if (result.status == OperationStatus::AuthorizationDenied)
-            setStatus(tr("Операция отменена: авторизация не выполнена."));
-        else if (result.status == OperationStatus::TimedOut)
-            setStatus(tr("Операция не завершилась за отведённое время."));
-        else if (result.status == OperationStatus::Unavailable)
-            setStatus(tr("Привилегированный helper недоступен."));
+        if (writing)
+            setStatus(tr("Запись не выполнена (код %1).").arg(result.nativeCode));
         else
-            setStatus(tr("Операция не выполнена."));
+            setStatus(tr("Не удалось прочитать конфигурацию (код %1).").arg(result.nativeCode));
         return;
     }
 
@@ -325,7 +321,7 @@ void ProfileController::save()
         QCryptographicHash::hash(m_configBytes, QCryptographicHash::Sha256).toHex();
     const auto digest = Sha256Digest::fromHex(digestHex);
     if (!digest) {
-        setStatus(tr("Не удалось вычислить контрольную сумму исходной конфигурации."));
+        setStatus(tr("Запись не выполнена (код %1).").arg(-1));
         return;
     }
 

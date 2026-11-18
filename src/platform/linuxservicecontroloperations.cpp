@@ -31,6 +31,7 @@ OperationResult resultForActionExitCode(int exitCode)
 PlatformOperation *completedOperation(QObject *parent, const OperationResult &result)
 {
     auto *operation = new PlatformOperation(parent);
+    connect(operation, &PlatformOperation::finished, operation, &QObject::deleteLater);
     QTimer::singleShot(0, operation, [operation, result] {
         operation->finish(result);
     });
@@ -75,6 +76,7 @@ PlatformOperation *LinuxServiceControlOperations::setBootEnabled(bool enabled)
 PlatformOperation *LinuxServiceControlOperations::startQuery(const QString &verb)
 {
     auto *operation = new PlatformOperation(this);
+    connect(operation, &PlatformOperation::finished, operation, &QObject::deleteLater);
     auto *process = new QProcess(this);
     auto *timeout = new QTimer(process);
     auto timedOut = std::make_shared<bool>(false);

@@ -135,7 +135,7 @@ PlatformOperation *LinuxServiceControlOperations::startQuery(const QString &verb
     connect(process, qOverload<int, QProcess::ExitStatus>(&QProcess::finished),
             operation,
             [process, operation, timeout, timedOut, outputExceeded, diagnosticExceeded,
-             outputSize, diagnosticSize, output]
+             outputSize, diagnosticSize]
             (int exitCode, QProcess::ExitStatus exitStatus) {
         timeout->stop();
 

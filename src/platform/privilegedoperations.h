@@ -1,11 +1,12 @@
 #pragma once
 
 #include <QByteArray>
-#include <QList>
+#include <QRegularExpression>
 #include <QStringList>
 #include <QUuid>
 
 #include <optional>
+#include <utility>
 
 #include "platform/privilegedoperation.h"
 
@@ -75,7 +76,17 @@ struct StartEpoch {
 class Sha256Digest final
 {
 public:
-    static std::optional<Sha256Digest> fromHex(const QByteArray &value);
+    static std::optional<Sha256Digest> fromHex(const QByteArray &value)
+    {
+        if (value.size() != 64)
+            return std::nullopt;
+
+        const QByteArray decoded = QByteArray::fromHex(value);
+        if (decoded.size() != 32 || decoded.toHex() != value)
+            return std::nullopt;
+
+        return Sha256Digest(value);
+    }
 
     const QByteArray &hex() const
     {
@@ -94,7 +105,15 @@ private:
 class ValidatedUpstreamVersion final
 {
 public:
-    static std::optional<ValidatedUpstreamVersion> fromTag(const QString &tag);
+    static std::optional<ValidatedUpstreamVersion> fromTag(const QString &tag)
+    {
+        static const QRegularExpression pattern(
+            QStringLiteral(R"(^v[0-9]+(?:\\.[0-9]+)*$)"));
+        if (tag.size() > 24 || !pattern.match(tag).hasMatch())
+            return std::nullopt;
+
+        return ValidatedUpstreamVersion(tag);
+    }
 
     const QString &tag() const
     {

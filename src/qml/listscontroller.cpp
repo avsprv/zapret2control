@@ -3,24 +3,13 @@
 #include <QAbstractSocket>
 #include <QHostAddress>
 #include <QRegularExpression>
+#include <QStringList>
 
 #include <optional>
 
 using namespace Zapret::Platform;
 
 namespace {
-
-const QStringList allowedNames {
-    QStringLiteral("zapret-hosts-user.txt"),
-    QStringLiteral("zapret-hosts-user-exclude.txt"),
-    QStringLiteral("zapret-hosts-user-ipban.txt"),
-    QStringLiteral("zapret-ip-user.txt"),
-    QStringLiteral("zapret-ip-user6.txt"),
-    QStringLiteral("zapret-ip-exclude.txt"),
-    QStringLiteral("zapret-ip-exclude6.txt"),
-    QStringLiteral("zapret-ip-user-ipban.txt"),
-    QStringLiteral("zapret-ip-user-ipban6.txt")
-};
 
 const QStringList editableNames {
     QStringLiteral("zapret-hosts-user.txt"),
@@ -69,7 +58,7 @@ bool ListsController::editable() const { return m_editable; }
 
 bool ListsController::isAllowedName(const QString &name) const
 {
-    return allowedNames.contains(name);
+    return listIdForName(name).has_value();
 }
 
 bool ListsController::isEditableName(const QString &name) const

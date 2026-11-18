@@ -45,7 +45,10 @@ SystemdBackend::SystemdBackend(ServiceControlOperations *operations, QObject *pa
     , m_operations(operations)
 {
     Q_ASSERT(m_operations);
-    m_operations->setParent(this);
+    auto *operationsObject = dynamic_cast<QObject *>(m_operations);
+    Q_ASSERT(operationsObject);
+    if (operationsObject)
+        operationsObject->setParent(this);
 }
 
 int SystemdBackend::processTimeoutMs(bool privileged) const

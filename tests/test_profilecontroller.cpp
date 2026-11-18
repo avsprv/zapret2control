@@ -41,6 +41,7 @@ public:
             const QByteArray actual =
                 QCryptographicHash::hash(contents, QCryptographicHash::Sha256).toHex();
             if (actual != expected) {
+                operation->reportStandardError(QByteArray("UNTRUSTED_HELPER_OUTPUT"));
                 operation->finish({OperationStatus::Failed, 9, QStringLiteral("fake.stale")});
                 return;
             }
@@ -160,6 +161,7 @@ void TestProfileController::staleConfigIsNeverOverwritten()
     QTRY_VERIFY_WITH_TIMEOUT(!controller.busy(), 1000);
     QVERIFY(controller.dirty());
     QCOMPARE(controller.status(), QStringLiteral("Запись не выполнена (код 9)."));
+    QVERIFY(!controller.status().contains(QStringLiteral("UNTRUSTED_HELPER_OUTPUT")));
     QCOMPARE(operations.contents, externallyChanged);
 }
 

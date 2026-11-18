@@ -35,8 +35,12 @@ ApplicationController::ApplicationController(ZapretBackend *backend, QObject *pa
         m_errorMessage = message;
         emit errorMessageChanged();
     });
-    connect(m_backend, &ZapretBackend::unitActionFinished, this,
-            [this](const QString &, ZapretBackend::State state, bool) {
+    connect(m_backend, &ZapretBackend::unitActionFinishedForRequest, this,
+            [this](quint64 requestId, const QString &, ZapretBackend::State state, bool) {
+        if (requestId == 0 || requestId != m_pendingRequestId)
+            return;
+
+        m_pendingRequestId = 0;
         setState(state);
         setServiceActionBusy(false);
     });
@@ -97,6 +101,14 @@ QString ApplicationController::errorMessage() const
     return m_errorMessage;
 }
 
+quint64 ApplicationController::nextRequestId()
+{
+    const quint64 requestId = m_nextRequestId++;
+    if (m_nextRequestId == 0)
+        m_nextRequestId = 1;
+    return requestId;
+}
+
 void ApplicationController::setServiceActionBusy(bool busy)
 {
     if (m_serviceActionBusy == busy)
@@ -118,8 +130,9 @@ void ApplicationController::startService()
         return;
     m_errorMessage.clear();
     emit errorMessageChanged();
+    m_pendingRequestId = nextRequestId();
     setServiceActionBusy(true);
-    m_backend->start();
+    m_backend->start(m_pendingRequestId);
 }
 
 void ApplicationController::stopService()
@@ -128,16 +141,18 @@ void ApplicationController::stopService()
         return;
     m_errorMessage.clear();
     emit errorMessageChanged();
+    m_pendingRequestId = nextRequestId();
     setServiceActionBusy(true);
-    m_backend->stop();
+    m_backend->stop(m_pendingRequestId);
 }
 
 void ApplicationController::setBootEnabled(bool enabled)
 {
     if (operationsBusy())
         return;
+    m_pendingRequestId = nextRequestId();
     setServiceActionBusy(true);
-    m_backend->setBootEnabled(enabled);
+    m_backend->setBootEnabled(enabled, m_pendingRequestId);
 }
 
 void ApplicationController::setState(ZapretBackend::State state)

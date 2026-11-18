@@ -1,6 +1,6 @@
 #include "platform/platformintegration.h"
 
-#include "backend/systemdbackend.h"
+#include "backend/systemdbackend.h"\n#include "qml/traycontroller.h"
 
 namespace Zapret::Platform {
 

@@ -124,39 +124,39 @@
     </message>
 </context>
 <context>
-    <name>AutostartController</name>
+    <name>LinuxAutostartIntegration</name>
     <message>
-        <location filename="../src/qml/autostartcontroller.cpp" line="98"/>
+        <location filename="../src/platform/linuxautostartintegration.cpp" line="98"/>
         <source>Файл автозапуска уже существует и не принадлежит приложению.</source>
         <translation>The autostart entry already exists and is not managed by this application.</translation>
     </message>
     <message>
-        <location filename="../src/qml/autostartcontroller.cpp" line="102"/>
+        <location filename="../src/platform/linuxautostartintegration.cpp" line="102"/>
         <source>Не удалось определить абсолютный путь к приложению.</source>
         <translation>Could not determine the application&apos;s absolute path.</translation>
     </message>
     <message>
-        <location filename="../src/qml/autostartcontroller.cpp" line="106"/>
+        <location filename="../src/platform/linuxautostartintegration.cpp" line="106"/>
         <source>Не удалось создать каталог автозапуска.</source>
         <translation>Could not create the autostart directory.</translation>
     </message>
     <message>
-        <location filename="../src/qml/autostartcontroller.cpp" line="111"/>
+        <location filename="../src/platform/linuxautostartintegration.cpp" line="111"/>
         <source>Не удалось записать файл автозапуска: %1</source>
         <translation>Could not write the autostart entry: %1</translation>
     </message>
     <message>
-        <location filename="../src/qml/autostartcontroller.cpp" line="116"/>
+        <location filename="../src/platform/linuxautostartintegration.cpp" line="116"/>
         <source>Не удалось сохранить файл автозапуска: %1</source>
         <translation>Could not save the autostart entry: %1</translation>
     </message>
     <message>
-        <location filename="../src/qml/autostartcontroller.cpp" line="129"/>
+        <location filename="../src/platform/linuxautostartintegration.cpp" line="129"/>
         <source>Файл автозапуска не принадлежит приложению и не будет удалён.</source>
         <translation>The autostart entry is not managed by this application and will not be removed.</translation>
     </message>
     <message>
-        <location filename="../src/qml/autostartcontroller.cpp" line="133"/>
+        <location filename="../src/platform/linuxautostartintegration.cpp" line="133"/>
         <source>Не удалось удалить файл автозапуска.</source>
         <translation>Could not remove the autostart entry.</translation>
     </message>

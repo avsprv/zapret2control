@@ -20,10 +20,9 @@ class ApplicationController final : public QObject
     Q_PROPERTY(QVariantList capabilities READ capabilities NOTIFY capabilitiesChanged)
 
 public:
-    explicit ApplicationController(QObject *parent = nullptr);
-    // Takes ownership of backend. This overload supports isolated controller tests
-    // and keeps platform-specific backend selection outside the controller logic.
-    ApplicationController(ZapretBackend *backend, QObject *parent);
+    // Takes ownership of the platform backend. Platform selection belongs to the
+    // composition layer, not to the QML-facing controller.
+    explicit ApplicationController(ZapretBackend *backend, QObject *parent = nullptr);
 
     QString serviceState() const;
     bool serviceActive() const;

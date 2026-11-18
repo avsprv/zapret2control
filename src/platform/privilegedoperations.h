@@ -200,10 +200,11 @@ public:
     virtual PlatformOperation *readRecentLogs(LogLineCount lineCount) = 0;
 };
 
-class ServiceControlOperations
+class ServiceControlOperations : public QObject
 {
 public:
-    virtual ~ServiceControlOperations() = default;
+    using QObject::QObject;
+    ~ServiceControlOperations() override = default;
 
     virtual PlatformOperation *queryEngineState() = 0;
     virtual PlatformOperation *queryBootEnabled() = 0;

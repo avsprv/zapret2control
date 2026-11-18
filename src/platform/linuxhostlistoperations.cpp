@@ -6,6 +6,7 @@
 #include <QTimer>
 
 #include <memory>
+#include <optional>
 
 namespace Zapret::Platform {
 namespace {

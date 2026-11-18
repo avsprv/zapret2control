@@ -245,7 +245,7 @@ if(BUILD_TESTING)
 
     qt_add_executable(test_systemdbackend tests/test_systemdbackend.cpp
         src/backend/systemdbackend.cpp src/backend/systemdbackend.h
-        src/backend/zapretbackend.h src/backend/helperpath.h)
+        src/backend/zapretbackend.h src/backend/backendtypes.h src/backend/helperpath.h)
     target_include_directories(test_systemdbackend PRIVATE src)
     target_link_libraries(test_systemdbackend PRIVATE Qt6::Test Qt6::Core)
     target_compile_definitions(test_systemdbackend PRIVATE QZAPRET_HELPER_PATH="/nonexistent")
@@ -254,7 +254,7 @@ if(BUILD_TESTING)
     qt_add_executable(test_applicationcontroller tests/test_applicationcontroller.cpp
         src/qml/applicationcontroller.cpp src/qml/applicationcontroller.h
         src/backend/systemdbackend.cpp src/backend/systemdbackend.h
-        src/backend/zapretbackend.h src/backend/helperpath.h)
+        src/backend/zapretbackend.h src/backend/backendtypes.h src/backend/helperpath.h)
     target_include_directories(test_applicationcontroller PRIVATE src src/qml)
     target_link_libraries(test_applicationcontroller PRIVATE Qt6::Test Qt6::Core)
     target_compile_definitions(test_applicationcontroller PRIVATE QZAPRET_HELPER_PATH="/nonexistent")

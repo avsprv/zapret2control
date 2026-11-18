@@ -872,11 +872,7 @@
         <source>Чтение списка %1…</source>
         <translation>Reading list %1…</translation>
     </message>
-    <message>
-        <location filename="../src/qml/listscontroller.cpp" line="164"/>
-        <source>Список превышает ограничение 1 MiB; чтение остановлено.</source>
-        <translation>List exceeds the 1 MiB limit; reading stopped.</translation>
-    </message>
+
     <message>
         <location filename="../src/qml/listscontroller.cpp" line="183"/>
         <source>Список превышает ограничение 1 MiB; данные не отображены.</source>
@@ -887,16 +883,8 @@
         <source>Файл %1 ещё не создан. Можно добавить записи и сохранить его.</source>
         <translation>File %1 does not exist yet. You can add entries and save it.</translation>
     </message>
-    <message>
-        <location filename="../src/qml/listscontroller.cpp" line="197"/>
-        <source>Не удалось прочитать список (код %1).</source>
-        <translation>Could not read list (exit code %1).</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/listscontroller.cpp" line="198"/>
-        <source>Не удалось прочитать список: %1</source>
-        <translation>Could not read list: %1</translation>
-    </message>
+
+
     <message>
         <location filename="../src/qml/listscontroller.cpp" line="203"/>
         <source>Список содержит некорректный UTF-8; данные не отображены.</source>
@@ -907,32 +895,15 @@
         <source>Список %1 прочитан.</source>
         <translation>List %1 read.</translation>
     </message>
-    <message>
-        <location filename="../src/qml/listscontroller.cpp" line="219"/>
-        <location filename="../src/qml/listscontroller.cpp" line="291"/>
-        <source>Не удалось запустить helper: %1</source>
-        <translation>Could not start helper: %1</translation>
-    </message>
+
     <message>
         <location filename="../src/qml/listscontroller.cpp" line="242"/>
         <source>Проверка и сохранение списка %1…</source>
         <translation>Validating and saving list %1…</translation>
     </message>
-    <message>
-        <location filename="../src/qml/listscontroller.cpp" line="279"/>
-        <source>Список сохранён; резервная копия создана.</source>
-        <translation>List saved; backup created.</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/listscontroller.cpp" line="281"/>
-        <source>Не удалось сохранить список (код %1).</source>
-        <translation>Could not save list (exit code %1).</translation>
-    </message>
-    <message>
-        <location filename="../src/qml/listscontroller.cpp" line="282"/>
-        <source>Не удалось сохранить список: %1</source>
-        <translation>Could not save list: %1</translation>
-    </message>
+
+
+
     <message>
         <source>Список сохранён.</source>
         <translation>List saved.</translation>

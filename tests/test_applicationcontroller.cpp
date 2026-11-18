@@ -2,6 +2,7 @@
 #include <QPointer>
 
 #include "qml/applicationcontroller.h"
+#include "backend/backendtypes.h"
 
 class FakeBackend final : public ZapretBackend
 {
@@ -90,6 +91,8 @@ private slots:
     void injectedBackendReceivesControllerCommands();
     void ignoresCompletionForUnrelatedRequest();
     void controllerOwnsInjectedBackend();
+    void typedOperationResultReportsOutcome();
+    void capabilityAvailabilityIsExplicit();
 };
 
 void ApplicationControllerTest::injectedBackendReceivesControllerCommands()
@@ -153,6 +156,62 @@ void ApplicationControllerTest::controllerOwnsInjectedBackend()
     }
 
     QVERIFY(backendGuard.isNull());
+}
+
+
+void ApplicationControllerTest::typedOperationResultReportsOutcome()
+{
+    using namespace Zapret::Backend;
+
+    const OperationResult result{
+        17,
+        Operation::Start,
+        OperationStatus::AuthorizationDenied,
+        EngineState::Inactive,
+        QStringLiteral("Authorization was denied")
+    };
+
+    QCOMPARE(result.requestId, quint64(17));
+    QCOMPARE(result.operation, Operation::Start);
+    QCOMPARE(result.status, OperationStatus::AuthorizationDenied);
+    QCOMPARE(result.state, EngineState::Inactive);
+    QVERIFY(!result.succeeded());
+
+    const OperationResult success{
+        18,
+        Operation::Stop,
+        OperationStatus::Succeeded,
+        EngineState::Inactive,
+        {}
+    };
+    QVERIFY(success.succeeded());
+}
+
+void ApplicationControllerTest::capabilityAvailabilityIsExplicit()
+{
+    using namespace Zapret::Backend;
+
+    const CapabilityInfo supported{
+        Capability::Start,
+        CapabilityAvailability::Available,
+        {}
+    };
+    const CapabilityInfo privileged{
+        Capability::BootEnablement,
+        CapabilityAvailability::RequiresAuthorization,
+        QStringLiteral("Requires elevated authorization")
+    };
+    const CapabilityInfo unavailable{
+        Capability::LoginAutostart,
+        CapabilityAvailability::Unavailable,
+        QStringLiteral("Not implemented on this platform")
+    };
+
+    QVERIFY(supported.isAvailable());
+    QVERIFY(!privileged.isAvailable());
+    QVERIFY(!unavailable.isAvailable());
+    QCOMPARE(privileged.reason, QStringLiteral("Requires elevated authorization"));
+    QCOMPARE(unavailable.capability, Capability::LoginAutostart);
 }
 
 QTEST_GUILESS_MAIN(ApplicationControllerTest)

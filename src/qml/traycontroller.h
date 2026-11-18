@@ -1,6 +1,7 @@
 #pragma once
 
-#include <QObject>
+#include "platform/trayintegration.h"
+
 #include <QDBusConnection>
 #include <QString>
 
@@ -9,12 +10,9 @@ class QEvent;
 class StatusNotifierItem;
 class DBusMenu;
 
-class TrayController final : public QObject
+class TrayController final : public TrayIntegration
 {
     Q_OBJECT
-    Q_PROPERTY(bool watcherAvailable READ watcherAvailable NOTIFY watcherAvailableChanged)
-    Q_PROPERTY(bool registered READ registered NOTIFY registeredChanged)
-    Q_PROPERTY(bool registrationFailed READ registrationFailed NOTIFY registrationFailedChanged)
 
 public:
     explicit TrayController(QObject *parent = nullptr);

@@ -1,5 +1,8 @@
 #include <QtTest>
 
+#include <algorithm>
+#include <QStringList>
+
 #include <QPointer>
 #include <QTimer>
 

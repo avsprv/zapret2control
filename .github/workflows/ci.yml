@@ -61,6 +61,14 @@ jobs:
           before = canonical_catalog("/tmp/zapret2control_en.ts.before")
           after = canonical_catalog("i18n/zapret2control_en.ts")
           if before != after:
+              import difflib
+              print("\n".join(difflib.unified_diff(
+                  before.decode("utf-8").splitlines(),
+                  after.decode("utf-8").splitlines(),
+                  fromfile="committed catalog",
+                  tofile="lupdate catalog",
+                  lineterm="",
+              )))
               raise SystemExit("Translation catalog differs from current sources")
           PY
       - name: Build

@@ -70,7 +70,9 @@ Resolve branches/tags to a full commit SHA. Verify checked-out HEAD equals the e
 
 An exact SHA identifies content but does not by itself authenticate its publisher. Do not claim publisher authentication without independently verified signing identity. Block on TLS/source identity failure, commit mismatch, Git integrity failure, ambiguous reference, or invalid signature when verification is attempted.
 
-The master branch is a tracking reference, not a compatibility pin. Do not silently change the pinned baseline as part of unrelated work.
+The initial integration baseline is the latest published upstream release observed on 2026-11-19: tag `v1.0.7`, commit `038c97e5819df10f8e8c22a2f1fffe57f2f7379b`. The exact manual blobs are recorded in `docs/UPSTREAM_CAPABILITY_MATRIX.md`. The commit is unsigned; do not claim publisher authentication. The master branch is a tracking reference, not a compatibility pin. Do not silently change the pinned baseline as part of unrelated work.
+
+The Linux capability inventory is maintained in `docs/UPSTREAM_CAPABILITY_MATRIX.md`. Read it before planning or implementing an upstream integration feature. Update it whenever the pinned baseline or a verified capability changes.
 
 ## 4. Full native-function coverage is a release requirement
 

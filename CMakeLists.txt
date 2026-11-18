@@ -71,7 +71,6 @@ qt_add_executable(zapret2control
     src/qml/applicationcontroller.h
     src/qml/settingsmanager.cpp
     src/qml/settingsmanager.h
-    src/platform/linuxautostartintegration.cpp
     src/qml/configcontroller.cpp
     src/qml/configcontroller.h
     src/qml/profilecontroller.cpp

@@ -82,7 +82,6 @@ PlatformOperation *LinuxServiceControlOperations::startQuery(const QString &verb
     auto diagnosticExceeded = std::make_shared<bool>(false);
     auto outputSize = std::make_shared<qsizetype>(0);
     auto diagnosticSize = std::make_shared<qsizetype>(0);
-    auto output = std::make_shared<QByteArray>();
 
     timeout->setSingleShot(true);
     connect(process, &QProcess::started, process, [process] {
@@ -94,7 +93,7 @@ PlatformOperation *LinuxServiceControlOperations::startQuery(const QString &verb
     });
 
     connect(process, &QProcess::readyReadStandardOutput, operation,
-            [process, operation, outputSize, outputExceeded, output] {
+            [process, operation, outputSize, outputExceeded] {
         const QByteArray data = process->readAllStandardOutput();
         if (data.isEmpty() || operation->isFinished())
             return;
@@ -106,7 +105,6 @@ PlatformOperation *LinuxServiceControlOperations::startQuery(const QString &verb
             return;
         }
 
-        output->append(data);
         operation->reportStandardOutput(data);
     });
 
@@ -117,8 +115,10 @@ PlatformOperation *LinuxServiceControlOperations::startQuery(const QString &verb
             return;
 
         *diagnosticSize += data.size();
-        if (*diagnosticSize > DiagnosticLimit)
+        if (*diagnosticSize > DiagnosticLimit) {
             *diagnosticExceeded = true;
+            process->kill();
+        }
     });
 
     connect(process, &QProcess::errorOccurred, operation,
@@ -145,7 +145,6 @@ PlatformOperation *LinuxServiceControlOperations::startQuery(const QString &verb
             if (*outputSize > QueryOutputLimit)
                 *outputExceeded = true;
             else {
-                output->append(remainingOutput);
                 operation->reportStandardOutput(remainingOutput);
             }
         }
@@ -173,6 +172,9 @@ PlatformOperation *LinuxServiceControlOperations::startQuery(const QString &verb
         } else if (exitStatus != QProcess::NormalExit) {
             result = {OperationStatus::Failed, exitCode,
                       QStringLiteral("systemctl.crashed")};
+        } else if (outputSize->isEmpty()) {
+            result = {OperationStatus::Failed, exitCode,
+                      QStringLiteral("systemctl.empty_response")};
         } else {
             // systemctl is-active/is-enabled use nonzero exit codes for valid states
             // such as inactive or disabled. The bounded stdout is authoritative.

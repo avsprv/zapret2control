@@ -580,11 +580,6 @@
 <context>
     <name>ConfigController</name>
     <message>
-        <location filename="../src/qml/configcontroller.cpp" line="68"/>
-        <source>Операция не выполнена (код %1).</source>
-        <translation>Operation failed (exit code %1).</translation>
-    </message>
-    <message>
         <location filename="../src/qml/configcontroller.cpp" line="74"/>
         <source>Файл конфигурации содержит некорректную последовательность UTF-8; чтение отменено во избежание потери данных.</source>
         <translation>The configuration file contains an invalid UTF-8 sequence; reading was canceled to prevent data loss.</translation>
@@ -695,6 +690,11 @@
         <location filename="../src/qml/configcontroller.cpp"/>
         <source>Конфигурация сохранена.</source>
         <translation>Configuration saved.</translation>
+    </message>
+    <message>
+        <location filename="../src/qml/configcontroller.cpp"/>
+        <source>Резервная копия восстановлена.</source>
+        <translation>Backup restored.</translation>
     </message>
 </context>
 <context>

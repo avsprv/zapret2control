@@ -884,7 +884,6 @@
         <translation>File %1 does not exist yet. You can add entries and save it.</translation>
     </message>
 
-
     <message>
         <location filename="../src/qml/listscontroller.cpp" line="203"/>
         <source>Список содержит некорректный UTF-8; данные не отображены.</source>
@@ -901,8 +900,6 @@
         <source>Проверка и сохранение списка %1…</source>
         <translation>Validating and saving list %1…</translation>
     </message>
-
-
 
     <message>
         <source>Список сохранён.</source>

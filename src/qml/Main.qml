@@ -1,11 +1,9 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Window
 import QtQuick.Controls as Controls
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
-import "pages"
 
 Kirigami.ApplicationWindow {
     id: root
@@ -22,316 +20,212 @@ Kirigami.ApplicationWindow {
     required property var blockcheckController
     required property var updateController
 
-    title: qsTr("Zapret2 Control")
+    title: qsTr("zapret2control")
     visible: !startMinimized
     width: Kirigami.Units.gridUnit * 54
     height: Kirigami.Units.gridUnit * 38
     minimumWidth: Kirigami.Units.gridUnit * 36
     minimumHeight: Kirigami.Units.gridUnit * 27
-    pageStack.initialPage: dashboardPage
 
-    Kirigami.Dialog {
-        id: quitBlockedDialog
-        title: qsTr("Нельзя завершить приложение")
-        standardButtons: Controls.Dialog.Ok
-
-        Controls.Label {
-            Layout.fillWidth: true
-            wrapMode: Text.WordWrap
-            text: qsTr("Дождитесь завершения текущей операции или восстановления zapret2. Принудительное завершение может повредить установленную систему.")
-        }
-    }
-
-    onClosing: function(close) {
-        if (root.appController.operationsBusy) {
-            close.accepted = false
-            root.showWindow()
-            quitBlockedDialog.open()
-            return
-        }
-        if (root.settingsManager.closeToTray && root.trayController.registered) {
-            close.accepted = false
-            hide()
-        }
-    }
-
-    function showWindow() {
-        show()
-        raise()
-        requestActivate()
-    }
-
-    function toggleWindow() {
-        if (visible && visibility !== Window.Minimized)
-            hide()
-        else
-            showWindow()
-    }
-
-    function requestQuit() {
-        if (root.appController.operationsBusy) {
-            showWindow()
-            quitBlockedDialog.open()
-            return
-        }
-        Qt.quit()
-    }
-
-    function openSettings() {
-        showWindow()
-        pageStack.push(settingsPageComponent)
-    }
+    pageStack.initialPage: overviewPage
 
     globalDrawer: Kirigami.GlobalDrawer {
-        title: qsTr("Zapret2 Control")
-        titleIcon: "zapret2control"
         isMenu: false
-        // Keep primary navigation visible on desktop, but use an overlay on narrow windows.
         modal: root.width < Kirigami.Units.gridUnit * 50
 
         actions: [
             Kirigami.Action {
-                text: qsTr("Статус")
-                icon.name: "network-connect"
-                onTriggered: root.pageStack.replace(dashboardPage)
+                text: qsTr("Обзор")
+                icon.name: "view-dashboard"
+                onTriggered: root.pageStack.replace(overviewPage)
             },
             Kirigami.Action {
                 text: qsTr("Конфигурация")
-                icon.name: "document-edit"
-                onTriggered: root.pageStack.push(configPageComponent)
-            },
-            Kirigami.Action {
-                text: qsTr("Профили")
-                icon.name: "view-list-details"
-                onTriggered: root.pageStack.push(profilesPageComponent)
+                icon.name: "configure"
+                onTriggered: root.pageStack.replace(configurationPage)
             },
             Kirigami.Action {
                 text: qsTr("Списки")
                 icon.name: "view-list-text"
-                onTriggered: root.pageStack.push(listsPageComponent)
+                onTriggered: root.pageStack.replace(listsPage)
             },
             Kirigami.Action {
-                text: qsTr("Мониторинг")
-                icon.name: "utilities-system-monitor"
-                onTriggered: root.pageStack.push(logsPageComponent)
+                text: qsTr("Диагностика")
+                icon.name: "tools-report-bug"
+                onTriggered: root.pageStack.replace(diagnosticsPage)
             },
             Kirigami.Action {
-                text: qsTr("Подбор стратегий")
-                icon.name: "search"
-                onTriggered: root.pageStack.push(blockcheckPageComponent)
+                text: qsTr("Журнал")
+                icon.name: "view-list-details"
+                onTriggered: root.pageStack.replace(journalPage)
             },
             Kirigami.Action {
-                text: qsTr("Обновления")
-                icon.name: "system-software-update"
-                onTriggered: root.pageStack.push(updatePageComponent)
+                text: qsTr("Управление zapret2")
+                icon.name: "system-software-install"
+                onTriggered: root.pageStack.replace(upstreamPage)
             },
             Kirigami.Action {
-                text: qsTr("Настройки")
+                text: qsTr("Настройки приложения")
                 icon.name: "settings-configure"
-                onTriggered: root.pageStack.push(settingsPageComponent)
+                onTriggered: root.pageStack.replace(applicationSettingsPage)
             },
             Kirigami.Action {
                 text: qsTr("О программе")
                 icon.name: "help-about"
-                onTriggered: root.pageStack.push(aboutPageComponent)
-            },
-            Kirigami.Action {
-                text: qsTr("Выход")
-                icon.name: "application-exit"
-                onTriggered: root.requestQuit()
+                onTriggered: root.pageStack.replace(aboutPage)
             }
         ]
     }
 
     Component {
-        id: dashboardPage
+        id: overviewPage
 
         Kirigami.ScrollablePage {
             title: qsTr("Обзор")
-            actions: [
-                Kirigami.Action {
-                    text: qsTr("Обновить")
-                    icon.name: "view-refresh"
-                    onTriggered: root.appController.refresh()
-                }
-            ]
 
             ColumnLayout {
                 width: parent.width
                 spacing: Kirigami.Units.largeSpacing
 
-                Kirigami.Heading {
-                    level: 1
-                    text: qsTr("Состояние zapret2")
-                }
-
-                Controls.Frame {
-                    Layout.fillWidth: true
-
-                    ColumnLayout {
-                        anchors.fill: parent
-                        spacing: Kirigami.Units.smallSpacing
-
-                        RowLayout {
-                            Layout.fillWidth: true
-
-                            Kirigami.Heading {
-                                level: 2
-                                text: root.appController.serviceState
-                            }
-
-                            Item { Layout.fillWidth: true }
-
-                            Rectangle {
-                                Layout.preferredWidth: Kirigami.Units.smallSpacing * 3
-                                Layout.preferredHeight: Kirigami.Units.smallSpacing * 3
-                                radius: width / 2
-                                color: root.appController.serviceStateCode === "active"
-                                     ? Kirigami.Theme.highlightColor
-                                     : Kirigami.Theme.textColor
-                                Accessible.ignored: true
-                            }
-                        }
-
-                        Controls.Label {
-                            Layout.fillWidth: true
-                            text: qsTr("Управление системной службой zapret2")
-                            opacity: 0.75
-                            wrapMode: Text.WordWrap
-                        }
-
-                        Controls.CheckBox {
-                            text: qsTr("Запускать zapret2 при загрузке системы")
-                            checked: root.appController.bootEnabled
-                            onToggled: root.appController.setBootEnabled(checked)
-                            enabled: !root.appController.operationsBusy
-                        }
-
-                        Flow {
-                            Layout.fillWidth: true
-                            spacing: Kirigami.Units.smallSpacing
-
-                            Controls.Button {
-                                text: qsTr("Запустить")
-                                icon.name: "media-playback-start"
-                                enabled: !root.appController.serviceActive && !root.appController.operationsBusy
-                                onClicked: root.appController.startService()
-                            }
-
-                            Controls.Button {
-                                text: qsTr("Остановить")
-                                icon.name: "media-playback-stop"
-                                enabled: root.appController.serviceActive && !root.appController.operationsBusy
-                                onClicked: root.appController.stopService()
-                            }
-
-                            Controls.Button {
-                                text: qsTr("Обновить состояние")
-                                icon.name: "view-refresh"
-                                enabled: !root.appController.operationsBusy
-                                onClicked: root.appController.refresh()
-                            }
-                        }
-                    }
-                }
-
-                Controls.Frame {
-                    Layout.fillWidth: true
-
-                    ColumnLayout {
-                        anchors.fill: parent
-                        spacing: Kirigami.Units.smallSpacing
-
-                        Kirigami.Heading {
-                            level: 2
-                            text: qsTr("Версия zapret2")
-                        }
-
-                        RowLayout {
-                            Layout.fillWidth: true
-
-                            Controls.Label {
-                                text: qsTr("Установленная версия")
-                                opacity: 0.75
-                            }
-
-                            Item { Layout.fillWidth: true }
-
-                            Controls.Label {
-                                text: root.updateController.installedVersion
-                                font.weight: Font.DemiBold
-                            }
-                        }
-
-                        Controls.Label {
-                            Layout.fillWidth: true
-                            text: root.updateController.installed
-                                  ? qsTr("Проверить наличие новых версий можно в разделе «Обновления».")
-                                  : qsTr("zapret2 пока не установлен. Перейдите в раздел «Обновления», чтобы выполнить установку.")
-                            wrapMode: Text.WordWrap
-                            opacity: 0.75
-                        }
-
-                        Controls.Button {
-                            text: qsTr("Открыть обновления")
-                            icon.name: "system-software-update"
-                            onClicked: root.pageStack.push(updatePageComponent)
-                        }
-                    }
-                }
-
                 Kirigami.InlineMessage {
                     Layout.fillWidth: true
-                    visible: root.appController.errorMessage.length > 0
-                    type: Kirigami.MessageType.Error
-                    text: root.appController.errorMessage
+                    type: Kirigami.MessageType.Information
+                    text: qsTr("Новая оболочка приложения. Раздел будет подключён после визуальной проверки навигации.")
                 }
-
             }
         }
     }
 
     Component {
-        id: configPageComponent
-        ConfigPage { configController: root.configController }
-    }
+        id: configurationPage
 
-    Component {
-        id: profilesPageComponent
-        ProfilesPage { profileController: root.profileController }
-    }
+        Kirigami.ScrollablePage {
+            title: qsTr("Конфигурация")
 
-    Component {
-        id: settingsPageComponent
-        SettingsPage {
-            settingsManager: root.settingsManager
-            autostartController: root.autostartController
-            trayController: root.trayController
+            ColumnLayout {
+                width: parent.width
+
+                Kirigami.InlineMessage {
+                    Layout.fillWidth: true
+                    type: Kirigami.MessageType.Information
+                    text: qsTr("Здесь будут представлены штатные параметры zapret2, профили, фильтры, расширенные настройки и исходный config.")
+                }
+            }
         }
     }
 
     Component {
-        id: aboutPageComponent
-        AboutPage {}
+        id: listsPage
+
+        Kirigami.ScrollablePage {
+            title: qsTr("Списки")
+
+            ColumnLayout {
+                width: parent.width
+
+                Kirigami.InlineMessage {
+                    Layout.fillWidth: true
+                    type: Kirigami.MessageType.Information
+                    text: qsTr("Раздел предназначен для пользовательских и генерируемых списков, источников, обновления и системного планировщика.")
+                }
+            }
+        }
     }
 
     Component {
-        id: logsPageComponent
-        LogsPage { logsController: root.logsController }
+        id: diagnosticsPage
+
+        Kirigami.ScrollablePage {
+            title: qsTr("Диагностика")
+
+            ColumnLayout {
+                width: parent.width
+
+                Kirigami.InlineMessage {
+                    Layout.fillWidth: true
+                    type: Kirigami.MessageType.Information
+                    text: qsTr("Диагностика будет запускать штатный blockcheck2.sh с соответствующими upstream-компонентами и настройками.")
+                }
+            }
+        }
     }
 
     Component {
-        id: listsPageComponent
-        ListsPage { listsController: root.listsController }
+        id: journalPage
+
+        Kirigami.ScrollablePage {
+            title: qsTr("Журнал")
+
+            ColumnLayout {
+                width: parent.width
+
+                Kirigami.InlineMessage {
+                    Layout.fillWidth: true
+                    type: Kirigami.MessageType.Information
+                    text: qsTr("Здесь будут раздельно отображаться операции приложения и журналы системных компонентов zapret2.")
+                }
+            }
+        }
     }
 
     Component {
-        id: blockcheckPageComponent
-        BlockcheckPage { blockcheckController: root.blockcheckController }
+        id: upstreamPage
+
+        Kirigami.ScrollablePage {
+            title: qsTr("Управление zapret2")
+
+            ColumnLayout {
+                width: parent.width
+
+                Kirigami.InlineMessage {
+                    Layout.fillWidth: true
+                    type: Kirigami.MessageType.Information
+                    text: qsTr("Установка, переустановка, обновление и удаление будут выполняться через штатные сценарии upstream-проекта.")
+                }
+            }
+        }
     }
 
     Component {
-        id: updatePageComponent
-        UpdatePage { updateController: root.updateController }
+        id: applicationSettingsPage
+
+        Kirigami.ScrollablePage {
+            title: qsTr("Настройки приложения")
+
+            ColumnLayout {
+                width: parent.width
+
+                Kirigami.InlineMessage {
+                    Layout.fillWidth: true
+                    type: Kirigami.MessageType.Information
+                    text: qsTr("Здесь будут находиться только настройки самого приложения: системный трей, запуск, уведомления и внешний вид.")
+                }
+            }
+        }
+    }
+
+    Component {
+        id: aboutPage
+
+        Kirigami.ScrollablePage {
+            title: qsTr("О программе")
+
+            ColumnLayout {
+                width: parent.width
+                spacing: Kirigami.Units.largeSpacing
+
+                Controls.Label {
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    text: qsTr("zapret2control — графический интерфейс для управления штатными возможностями upstream zapret2 в KDE Plasma.")
+                }
+
+                Controls.Label {
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    text: qsTr("Версия приложения: %1").arg(Qt.application.version)
+                }
+            }
+        }
     }
 }

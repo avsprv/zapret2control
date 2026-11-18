@@ -276,7 +276,8 @@ void ListsController::readList(const QString &name)
         m_operation = nullptr;
         setBusy(false);
 
-        if (m_outputExceeded) {
+        if (m_outputExceeded
+            || result.diagnosticCode == QLatin1String("helper.stdout_limit_exceeded")) {
             setStatus(tr("Список превышает ограничение 1 MiB; данные не отображены."));
             return;
         }

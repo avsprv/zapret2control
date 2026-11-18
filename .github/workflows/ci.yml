@@ -25,7 +25,6 @@ jobs:
           cmake --build build --target zapret2control_i18n_lupdate
           python3 - <<'PY'
           import xml.etree.ElementTree as ET
-          from pathlib import Path
 
           def canonical_catalog(path):
               root = ET.parse(path).getroot()
@@ -37,7 +36,7 @@ jobs:
                       message.remove(location)
 
               # Qt Linguist may reorder equivalent context and message elements.
-
+              for context in root.findall("context"):
                   messages = context.findall("message")
                   for message in messages:
                       context.remove(message)

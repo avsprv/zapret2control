@@ -60,6 +60,11 @@ private:
     void completeUnitAction(UnitAction action, quint64 requestId,
                             bool success, Zapret::Backend::OperationStatus status,
                             const QString &message);
+    static QString actionName(UnitAction action);
+    static Zapret::Backend::Operation operationForAction(UnitAction action);
+    QString queryErrorMessage(const Zapret::Platform::OperationResult &result) const;
+    QString actionErrorMessage(Zapret::Platform::OperationStatus status,
+                               int nativeCode, const QString &action) const;
 
     Zapret::Platform::ServiceControlOperations *m_operations = nullptr;
     QQueue<PendingUnitAction> m_pendingActions;

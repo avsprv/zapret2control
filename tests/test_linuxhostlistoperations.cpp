@@ -16,8 +16,10 @@ private Q_SLOTS:
     void readsAllowlistedList();
     void mapsMissingListToEmptyResult();
     void writesOnlySourceListsAndPassesBoundedInput();
+    void rejectsInvalidListIdentifiers();
     void rejectsOversizedInput();
     void rejectsOversizedOutput();
+    void rejectsOversizedDiagnostics();
     void mapsAuthorizationCancellation();
     void enforcesOperationTimeout();
 
@@ -41,6 +43,7 @@ case "${QZAPRET_FAKE_MODE:-}" in
     deny) exit 126 ;;
     timeout) sleep 2; exit 0 ;;
     oversized) head -c 1048577 /dev/zero; exit 0 ;;
+    stderr-oversized) head -c 65537 /dev/zero >&2; exit 1 ;;
 esac
 case "$1" in
     lists-read)
@@ -131,6 +134,18 @@ void TestLinuxHostListOperations::writesOnlySourceListsAndPassesBoundedInput()
              OperationStatus::ProtocolError);
 }
 
+void TestLinuxHostListOperations::rejectsInvalidListIdentifiers()
+{
+    LinuxHostListOperations operations;
+    const auto invalidId = static_cast<HostListId>(999);
+    PlatformOperation *operation = operations.readList(invalidId);
+    QSignalSpy finishedSpy(operation, &PlatformOperation::finished);
+
+    QTRY_COMPARE_WITH_TIMEOUT(finishedSpy.size(), 1, 1000);
+    QCOMPARE(finishedSpy.constFirst().constFirst().value<OperationResult>().status,
+             OperationStatus::ProtocolError);
+}
+
 void TestLinuxHostListOperations::rejectsOversizedInput()
 {
     LinuxHostListOperations operations;
@@ -146,6 +161,19 @@ void TestLinuxHostListOperations::rejectsOversizedInput()
 void TestLinuxHostListOperations::rejectsOversizedOutput()
 {
     qputenv("QZAPRET_FAKE_MODE", "oversized");
+    LinuxHostListOperations operations;
+    PlatformOperation *operation = operations.readList(HostListId::ZapretHostsUser);
+    QSignalSpy finishedSpy(operation, &PlatformOperation::finished);
+
+    QTRY_COMPARE_WITH_TIMEOUT(finishedSpy.size(), 1, 3000);
+    QCOMPARE(finishedSpy.constFirst().constFirst().value<OperationResult>().status,
+             OperationStatus::ProtocolError);
+    qunsetenv("QZAPRET_FAKE_MODE");
+}
+
+void TestLinuxHostListOperations::rejectsOversizedDiagnostics()
+{
+    qputenv("QZAPRET_FAKE_MODE", "stderr-oversized");
     LinuxHostListOperations operations;
     PlatformOperation *operation = operations.readList(HostListId::ZapretHostsUser);
     QSignalSpy finishedSpy(operation, &PlatformOperation::finished);

@@ -933,6 +933,38 @@
         <source>Не удалось сохранить список: %1</source>
         <translation>Could not save list: %1</translation>
     </message>
+    <message>
+        <source>Список сохранён.</source>
+        <translation>List saved.</translation>
+    </message>
+    <message>
+        <source>Авторизация отменена.</source>
+        <translation>Authorization was cancelled.</translation>
+    </message>
+    <message>
+        <source>Операция превысила время ожидания.</source>
+        <translation>The operation timed out.</translation>
+    </message>
+    <message>
+        <source>Не удалось запустить helper.</source>
+        <translation>Could not start the helper.</translation>
+    </message>
+    <message>
+        <source>Получен некорректный ответ от helper.</source>
+        <translation>The helper returned an invalid response.</translation>
+    </message>
+    <message>
+        <source>Не удалось прочитать список.</source>
+        <translation>Could not read the list.</translation>
+    </message>
+    <message>
+        <source>Не удалось сохранить список.</source>
+        <translation>Could not save the list.</translation>
+    </message>
+    <message>
+        <source>Операции со списками недоступны.</source>
+        <translation>List operations are unavailable.</translation>
+    </message>
 </context>
 <context>
     <name>ListsPage</name>

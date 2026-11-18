@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QMetaType>
+#include <QObject>
 #include <QString>
 
 namespace Zapret::Backend {

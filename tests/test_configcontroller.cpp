@@ -22,6 +22,7 @@ public:
     QByteArray contents = QByteArray("NFQWS2_ENABLE=1\n");
     QByteArray previousContents = contents;
     bool failNextWrite = false;
+    QByteArray failureDiagnostic;
     bool denyNextOperation = false;
 
     PlatformOperation *readConfiguration() override
@@ -57,6 +58,8 @@ public:
             }
             if (failNextWrite) {
                 failNextWrite = false;
+                if (!failureDiagnostic.isEmpty())
+                    operation->reportStandardError(failureDiagnostic);
                 operation->finish({OperationStatus::Failed, 5, QStringLiteral("fake.write_failed")});
                 return;
             }
@@ -90,6 +93,7 @@ private Q_SLOTS:
     void savesValidatedConfiguration();
     void rejectsInvalidShellSyntax();
     void reportsAuthorizationCancellation();
+    void doesNotExposeHelperDiagnostics();
     void rollsBackAndReloadsConfiguration();
 };
 
@@ -150,6 +154,25 @@ void TestConfigController::reportsAuthorizationCancellation()
 
     QVERIFY(controller.status().contains(QStringLiteral("авторизация не выполнена")));
     QCOMPARE(operations.contents, QByteArray("NFQWS2_ENABLE=1\n"));
+}
+
+void TestConfigController::doesNotExposeHelperDiagnostics()
+{
+    FakeConfigurationOperations operations;
+    ConfigController controller(&operations);
+    controller.read();
+    QTRY_VERIFY_WITH_TIMEOUT(!controller.busy(), 1000);
+
+    const QString untrustedText = QStringLiteral("UNTRUSTED_HELPER_OUTPUT");
+    operations.failNextWrite = true;
+    operations.failureDiagnostic = untrustedText.toUtf8();
+    controller.setConfigText(QStringLiteral("NFQWS2_ENABLE=0\\n"));
+    controller.save();
+    QTRY_VERIFY_WITH_TIMEOUT(!controller.busy(), 1000);
+
+    QVERIFY(!controller.status().contains(untrustedText));
+    QCOMPARE(controller.status(), QStringLiteral("Операция не выполнена."));
+    QCOMPARE(operations.contents, QByteArray("NFQWS2_ENABLE=1\\n"));
 }
 
 void TestConfigController::rollsBackAndReloadsConfiguration()

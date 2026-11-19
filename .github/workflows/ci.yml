@@ -23,6 +23,8 @@ jobs:
         run: |
           cp i18n/zapret2control_en.ts /tmp/zapret2control_en.ts.before
           cmake --build build --target zapret2control_i18n_lupdate
+      - name: Verify translation catalog is up to date
+        run: |
           python3 - <<'PY'
           import xml.etree.ElementTree as ET
           from pathlib import Path

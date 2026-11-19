@@ -23,13 +23,6 @@ jobs:
         run: |
           cp i18n/zapret2control_en.ts /tmp/zapret2control_en.ts.before
           cmake --build build --target zapret2control_i18n_lupdate
-      - name: Upload generated translation catalog for diagnosis
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: generated-translation-catalog
-          path: i18n/zapret2control_en.ts
-          if-no-files-found: error
       - name: Verify translation catalog is up to date
         run: |
           python3 - <<'PY'

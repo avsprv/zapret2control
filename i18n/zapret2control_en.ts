@@ -1202,7 +1202,7 @@
     <message>
         <location filename="../src/qml/Main.qml" line="23"/>
         <source>zapret2control</source>
-        <translation type="unfinished">zapret2control</translation>
+        <translation>zapret2control</translation>
     </message>
     <message>
         <location filename="../src/qml/Main.qml" line="34"/>
@@ -1224,70 +1224,70 @@
         <location filename="../src/qml/Main.qml" line="105"/>
         <location filename="../src/qml/Main.qml" line="191"/>
         <source>Диагностика</source>
-        <translation type="unfinished">Diagnostics</translation>
+        <translation>Diagnostics</translation>
     </message>
     <message>
         <location filename="../src/qml/Main.qml" line="110"/>
         <location filename="../src/qml/Main.qml" line="209"/>
         <source>Журнал</source>
-        <translation type="unfinished">Journal</translation>
+        <translation>Journal</translation>
     </message>
     <message>
         <location filename="../src/qml/Main.qml" line="115"/>
         <location filename="../src/qml/Main.qml" line="227"/>
         <source>Управление zapret2</source>
-        <translation type="unfinished">Manage zapret2</translation>
+        <translation>Manage zapret2</translation>
     </message>
     <message>
         <location filename="../src/qml/Main.qml" line="120"/>
         <location filename="../src/qml/Main.qml" line="245"/>
         <source>Настройки приложения</source>
-        <translation type="unfinished">Application settings</translation>
+        <translation>Application settings</translation>
     </message>
     <message>
         <location filename="../src/qml/Main.qml" line="145"/>
         <source>Новая оболочка приложения. Раздел будет подключён после визуальной проверки навигации.</source>
-        <translation type="unfinished">This is the new application shell. The section will be implemented after the navigation has been visually reviewed.</translation>
+        <translation>This is the new application shell. The section will be implemented after the navigation has been visually reviewed.</translation>
     </message>
     <message>
         <location filename="../src/qml/Main.qml" line="163"/>
         <source>Здесь будут представлены штатные параметры zapret2, профили, фильтры, расширенные настройки и исходный config.</source>
-        <translation type="unfinished">Native zapret2 settings, profiles, filters, advanced options, and the original config will be available here.</translation>
+        <translation>Native zapret2 settings, profiles, filters, advanced options, and the original config will be available here.</translation>
     </message>
     <message>
         <location filename="../src/qml/Main.qml" line="181"/>
         <source>Раздел предназначен для пользовательских и генерируемых списков, источников, обновления и системного планировщика.</source>
-        <translation type="unfinished">Manage user and generated lists, sources, updates, and the system scheduler here.</translation>
+        <translation>Manage user and generated lists, sources, updates, and the system scheduler here.</translation>
     </message>
     <message>
         <location filename="../src/qml/Main.qml" line="199"/>
         <source>Диагностика будет запускать штатный blockcheck2.sh с соответствующими upstream-компонентами и настройками.</source>
-        <translation type="unfinished">Diagnostics will run the upstream blockcheck2.sh script with matching upstream components and settings.</translation>
+        <translation>Diagnostics will run the upstream blockcheck2.sh script with matching upstream components and settings.</translation>
     </message>
     <message>
         <location filename="../src/qml/Main.qml" line="217"/>
         <source>Здесь будут раздельно отображаться операции приложения и журналы системных компонентов zapret2.</source>
-        <translation type="unfinished">Application operations and logs from zapret2 system components will be displayed separately here.</translation>
+        <translation>Application operations and logs from zapret2 system components will be displayed separately here.</translation>
     </message>
     <message>
         <location filename="../src/qml/Main.qml" line="235"/>
         <source>Установка, переустановка, обновление и удаление будут выполняться через штатные сценарии upstream-проекта.</source>
-        <translation type="unfinished">Installation, reinstallation, updates, and removal will use the upstream project’s official scripts.</translation>
+        <translation>Installation, reinstallation, updates, and removal will use the upstream project’s official scripts.</translation>
     </message>
     <message>
         <location filename="../src/qml/Main.qml" line="253"/>
         <source>Здесь будут находиться только настройки самого приложения: системный трей, запуск, уведомления и внешний вид.</source>
-        <translation type="unfinished">Only application preferences will be available here: system tray, startup, notifications, and appearance.</translation>
+        <translation>Only application preferences will be available here: system tray, startup, notifications, and appearance.</translation>
     </message>
     <message>
         <location filename="../src/qml/Main.qml" line="272"/>
         <source>zapret2control — графический интерфейс для управления штатными возможностями upstream zapret2 в KDE Plasma.</source>
-        <translation type="unfinished">zapret2control is a graphical interface for managing native upstream zapret2 capabilities in KDE Plasma.</translation>
+        <translation>zapret2control is a graphical interface for managing native upstream zapret2 capabilities in KDE Plasma.</translation>
     </message>
     <message>
         <location filename="../src/qml/Main.qml" line="278"/>
         <source>Версия приложения: %1</source>
-        <translation type="unfinished">Application version: %1</translation>
+        <translation>Application version: %1</translation>
     </message>
 </context>
 <context>
